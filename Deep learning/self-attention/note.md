@@ -14,3 +14,6 @@
 ![image](https://user-images.githubusercontent.com/26198992/177484263-e3fa3192-32e5-4a7f-a5cd-600aa9db6cef.png)
 
 通过计算可以发现，参数的数量明显减少。
+
+# ViT
+在提取的特征之前，加上一个cls_token的标志，该位对应向量可以作为整句话的语义表示，从而用于下游的分类任务等。这是因为cls_token位本身没有语义，经过12层，得到的是attention后所有词的加权平均，相比其他正常词，可以更好的表征句子语义。
