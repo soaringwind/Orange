@@ -16,4 +16,24 @@
 通过计算可以发现，参数的数量明显减少。
 
 # ViT
-在提取的特征之前，加上一个cls_token的标志，该位对应向量可以作为整句话的语义表示，从而用于下游的分类任务等。这是因为cls_token位本身没有语义，经过12层，得到的是attention后所有词的加权平均，相比其他正常词，可以更好的表征句子语义。
+在提取的特征矩阵之前，加上一个cls_token的标志，该位对应向量可以作为整句话的语义表示，从而用于下游的分类任务等。这是因为cls_token位本身没有语义，经过多层attention，得到的是attention后所有词的加权平均，相比其他正常词，可以更好的表征句子语义。
+
+# self-attention原理
+自注意力机制（self-attention）最开始用在NLP任务中，它可以有效的解决RNN和LSTM带来的记忆消退问题。RNN（循环神经网络）它最大的问题在于两点，第一是无法并行计算，只能够等待前一个计算完之后，再计算下一个输出，第二是无法将最前面的信息跟随着传递到最后面去（也就是记忆消退问题）。在此基础上提出attention机制，它首先是考虑全局的影响，之后根据训练来找到需要注意的地方，也就是自适应的找到聚焦点。如下图。
+
+![image](https://user-images.githubusercontent.com/26198992/177941193-149f8549-1bd1-48e3-abf8-0c280d40de16.png)
+
+## attention原理
+注意力机制的提出要早于自注意力机制，它实际上解决的问题是如何分配注意力问题，也是去计算attention值基本和后面的self-attention的计算过程一样。本质过程如图。
+
+![image](https://user-images.githubusercontent.com/26198992/177942431-8420f8fc-ed7d-4ffe-b0fc-6f2a0b7ac676.png)
+
+query和key计算相似度，之后将其归一化，归一化之后再和value值加权求和，即可得到attention的值。计算如图。
+
+![image](https://user-images.githubusercontent.com/26198992/177942753-98fca16c-0351-4515-b13c-82e41186b4a4.png)
+
+## self-attention原理
+self-attention和attention机制在本质上基本一样，他们的区别在于attention是target和source做attention计算，而self-attention是source和source本身计算attention也就是计算自己各个部分的attention分数。计算过程如图。
+
+![image](https://user-images.githubusercontent.com/26198992/177944172-f3a352f6-555b-48ef-b1fd-7903915b2238.png)
+
