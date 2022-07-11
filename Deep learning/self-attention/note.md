@@ -37,3 +37,19 @@ self-attention和attention机制在本质上基本一样，他们的区别在于
 
 ![image](https://user-images.githubusercontent.com/26198992/177944172-f3a352f6-555b-48ef-b1fd-7903915b2238.png)
 
+# Transformer
+
+## end-to-end
+
+end-to-eng实际上就是端到端，它指的就是输入的是原始数据，输出的是最后的结果。而在最初的机器学习当中，输入的往往是在原始数据中提取的特征，这种时候分类的结果十分取决于提取特征的好坏，所以以前的机器学习又被称为特征工程（feature engineering）。
+
+好处：通过缩减人工预处理和后续处理，尽可能使模型从原始输入到最终输出，给模型更多可以根据数据自动调节的空间，增加模型的整体契合度。
+
+缺点：往往需要大量的训练数据。比如人脸识别，无法提前知道人脸会在何处出现，也不知道大小是多少，很难直接从原始图像中直接判断，这时候就需要分步来完成。
+
+## transformer
+
+![img](https://upload-images.jianshu.io/upload_images/1667471-926eb6cb29978dad.png?imageMogr2/auto-orient/strip|imageView2/2/w/347/format/webp)
+
+
+
