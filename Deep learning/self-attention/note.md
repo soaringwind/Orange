@@ -16,8 +16,6 @@ TP指的是正样本识别为正样本，TN指的是负样本识别为负样本�
 
 特异度：在所有负样本中被正确预测的比率。
 
-
-
 # 深度可分离卷积
 
 深度可分离卷积depthwise separable convolution，由depthwise(DW)和pointwise(PW)两个部分结合起来，用来提取特征feature map相比常规的卷积操作，其参数数量和运算成本比较低。实际上就是把一次卷积做的事情，拆成两次，来降低参数量。
