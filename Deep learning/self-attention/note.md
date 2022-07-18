@@ -72,6 +72,8 @@ end-to-eng实际上就是端到端，它指的就是输入的是原始数据，�
 
 
 ## Swin Transformer
+# 代码
+https://github.com/berniwal/swin-transformer-pytorch
 # mask部分理解
 循环移位是为了让图像分割方便，因为移位之后，可以和之前一样来进行分割。
 实际上这里的mask是因为在之前做了一次循环移位，也就是把较远位置的图像移到了一起，所以互相之间不能计算相关性，要把结果给隐去，所以使用了mask。
