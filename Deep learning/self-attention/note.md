@@ -88,4 +88,20 @@ end-to-eng实际上就是端到端，它指的就是输入的是原始数据，�
 ![img](https://upload-images.jianshu.io/upload_images/1667471-926eb6cb29978dad.png?imageMogr2/auto-orient/strip|imageView2/2/w/347/format/webp)
 
 
+## Swin Transformer
+# 代码
+https://github.com/berniwal/swin-transformer-pytorch
+https://zhuanlan.zhihu.com/p/542675669
+https://zhuanlan.zhihu.com/p/361366090
 
+# mask部分理解
+循环移位是为了让图像分割方便，因为移位之后，可以和之前一样来进行分割。
+实际上这里的mask是因为在之前做了一次循环移位，也就是把较远位置的图像移到了一起，所以互相之间不能计算相关性，要把结果给隐去，所以使用了mask。
+https://itcn.blog/p/0856239139.html
+
+# einsum（爱因斯坦求和）
+https://zhuanlan.zhihu.com/p/44954540
+
+# 整理
+https://www.cxybb.com/article/weixin_44485421/119425070
+https://zhuanlan.zhihu.com/p/384727327
