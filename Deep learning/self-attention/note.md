@@ -110,3 +110,18 @@ https://zhuanlan.zhihu.com/p/44954540
 # 整理
 https://www.cxybb.com/article/weixin_44485421/119425070
 https://zhuanlan.zhihu.com/p/384727327
+
+# 目标检测
+知识点：
+1. 人脸数据集与非人脸数据集准备
+2. IOU计算
+3. 级联思想
+## Adaboost
+## MTCNN
+
+# 目标识别
+## VGG
+## SENet
+## CBAMNet
+## SwinT
+## FETrans
