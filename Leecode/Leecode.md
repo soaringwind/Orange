@@ -152,11 +152,12 @@ end_index % n，超过则会自动相减。
 
 5. 堆排序：
 
-6. 快速排序：
+6. 快速排序：效率最差为n方，理论上是nlogn，思想和归并排序很像，都是分治。注意在确定主元（pivot）的时候，最好要随机选取，才能达到理论的效率。
 
 7. 习题解析
 
    leetcode 1122题：[数组的相对排序](https://leetcode-cn.com/problems/relative-sort-array/description/)
+   leetcode 912题：[排序数组](https://leetcode.cn/problems/sort-an-array/)
 
 ### 6. 动态规划
 
