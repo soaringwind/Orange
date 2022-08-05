@@ -149,10 +149,63 @@ end_index % n，超过则会自动相减。
 3. 归并排序：属于CBA（比较式算法）中，效率较高的算法，时间复杂度n*logn。
 
 4. 计数排序/桶排序：效率可到达n，但是会消耗一定的空间，时间复杂度可到n。
+   
+   ```python
+   class Solution:
+      def merge_sort(self, nums, l, r):
+         if l == r:
+            return
+         mid = (l + r) // 2
+         self.merge_sort(nums, l, mid)
+         self.merge_sort(nums, mid + 1, r)
+         tmp = []
+         i, j = l, mid + 1
+         while i <= mid or j <= r:
+            if i > mid or (j <= r and nums[j] < nums[i]):
+               tmp.append(nums[j])
+               j += 1
+            else:
+               tmp.append(nums[i])
+               i += 1
+         nums[l: r + 1] = tmp
 
-5. 堆排序：
+      def sortArray(self, nums: List[int]) -> List[int]:
+         self.merge_sort(nums, 0, len(nums) - 1)
+         return nums
+   ```
+
+5. 堆排序：这个目前没有自己手动实现过，但理论是构建一个最大堆，不断把最顶的元素移到数组右边，不断调整最大堆实现排序。
 
 6. 快速排序：效率最差为n方，理论上是nlogn，思想和归并排序很像，都是分治。注意在确定主元（pivot）的时候，最好要随机选取，才能达到理论的效率。
+   
+   ```python
+   # 1. 范围内随机选取一个值。
+   # 2. 将该范围内的值小于主元值移到该值左侧，大于主元值的移到该值右侧。
+   # 3. 返回主元值当前索引，并将左右范围内的值递归求解。
+   class Solution:
+      def randomized_partition(self, nums, l, r):
+         pivot = random.randint(l, r)
+         nums[pivot], nums[r] = nums[r], nums[pivot]
+         i = l - 1
+         for j in range(l, r):
+            if nums[j] < nums[r]:
+                i += 1
+                nums[j], nums[i] = nums[i], nums[j]
+         i += 1
+         nums[i], nums[r] = nums[r], nums[i]
+      return i
+
+      def randomized_quicksort(self, nums, l, r):
+         if r - l <= 0:
+            return
+         mid = self.randomized_partition(nums, l, r)
+         self.randomized_quicksort(nums, l, mid - 1)
+         self.randomized_quicksort(nums, mid + 1, r)
+
+      def sortArray(self, nums: List[int]) -> List[int]:
+         self.randomized_quicksort(nums, 0, len(nums) - 1)
+         return nums
+   ```
 
 7. 习题解析
 
