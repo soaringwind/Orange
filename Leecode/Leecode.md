@@ -112,10 +112,32 @@ end_index % n，超过则会自动相减。
    1. 先序遍历：当前节点 -> 左子树 -> 右子树。
    2. 中序遍历：左子树 -> 当前节点 -> 右子树。
    3. 后序遍历：左子树 -> 右子树 -> 当前节点。
+   复习：树的深度遍历都需要用到栈这个结构，采用递归内部维护了一个栈，不采用递归需要自己手动实现一个栈。
+   
+   ```python
+   node_list = [root]
+   while node_list:
+      node = node_list.pop() # 这里如果写成pop(0)就是队列因为FIF0
+      if node.right:
+         node_list.append(node.right)
+      if node.left:
+         node_list.append(node.left) # 这里之所以要倒着就是因为使用的是栈
+   ```
 
 4. 层次遍历：往往应用在和树相关的题目中。
 
    需要使用的数据结构为队列。
+   
+   ```python
+   node_list = [root]
+   while node_list:
+      for _ in range(len(node_list): # 这里用for的原因就是可以把一层的节点都访问完。
+         node = node_list.pop(0) # 这里就是队列因为FIF0
+         if node.left:
+            node_list.append(node.left)
+         if node.right:
+            node_list.append(node.right) # 这里就不用倒着了。
+   ```
 
    如何在每一层遍历完成之后再进入下一层，记住下面这张图：
 
@@ -296,7 +318,8 @@ class ListNode(object):
    - 由有序数组构建二叉搜索树：找到每一个区间的中间位置，递归构建左子树及右子树。
 
      leetcode 108题：[将有序数组转换为二叉搜索树](https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/description/)
-
+ 
+ 3. 二叉搜索树：该树的中序遍历结果就是一个非降序的结果，也就是说该树的左子树的值一定小于根节点，右子树的值一定大于根节点。
    
 
 ### 3.  散列表
