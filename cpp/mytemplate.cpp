@@ -16,8 +16,9 @@ void swap(T *temVal, int len) {
 
 int main() {
     long long a = 413241231132441234; 
-    swap(&a, sizeof(a));
-    std::cout << a << std::endl;
-    swap(&a, sizeof(a));
+    // swap(&a, sizeof(a));
+    // long long *b = &a;
+    std::cout << &a << std::endl;
+    // swap(&a, sizeof(a));
     return 0;
 }
