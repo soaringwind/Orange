@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <string>
 
 template<typename T>
 void swap(T *temVal, int len) {
@@ -15,10 +15,11 @@ void swap(T *temVal, int len) {
 }
 
 int main() {
-    long long a = 413241231132441234; 
+    // long long a = 413241231132441234; 
     // swap(&a, sizeof(a));
     // long long *b = &a;
-    std::cout << &a << std::endl;
+    // std::cout << &a << std::endl;
     // swap(&a, sizeof(a));
+    std::cout << typeid(std::string).name() << std::endl;
     return 0;
 }
