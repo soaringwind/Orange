@@ -9,7 +9,9 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I", 
+                "D:\\c\\vcpkg\\vcpkg\\installed\\x86-windows\\include"
             ],
             "options": {
                 "cwd": "${fileDirname}"
