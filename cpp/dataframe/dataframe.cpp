@@ -37,8 +37,8 @@ public:
 	void update_value(T& _in);
 
 	// 修改cell数据类型
-	void update_dtype(int);
-	void update_dtype(float);
+	template<class T>
+	void update_dtype(T);
 
 	// 深拷贝构造函数
 	Cell copy();
@@ -124,6 +124,32 @@ inline void Cell::update_value(T& _in)
 		return;
 	}
 	return;
+}
+
+template<class T>
+inline void Cell::update_dtype(T)
+{
+	std::string tem = this->to_string();
+	if (std::is_same<T, int>::value) {
+		int tem_i = std::stoi(tem);
+		this->update_value(tem_i);
+	}
+	else if (std::is_same<T, float>::value) {
+		float tem_f = std::stof(tem);
+		this->update_value(tem_i);
+	}
+	else if (std::is_same<T, double>::value) {
+		double tem_f = std::stod(tem);
+		this->update_value(tem_i);
+	}
+	else if (std::is_same<T, long>::value) {
+		long tem_f = std::stol(tem);
+		this->update_value(tem_i);
+	}
+	else
+	{
+		this->update_value(tem);
+	}
 }
 
 
