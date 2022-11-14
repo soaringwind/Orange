@@ -152,5 +152,37 @@ inline void Cell::update_dtype(T)
 	}
 }
 
+#include "dataFrame.hpp"
+
+std::string Cell::to_string()
+{
+	switch (this->dtype)
+	{
+	case intergId:
+		return std::to_string(*(int*)this->value);
+	case floatId:
+		return std::to_string(*(float*)this->value);
+	case doubleId:
+		return std::to_string(*(double*)this->value);
+	case longId:
+		return std::to_string(*(long*)this->value);
+	case stringId:
+		return *(std::string*)this->value;
+	default:
+		break;
+	}
+    return std::string();
+}
+int main() {
+	Cell cell1{};
+	int a = 1;
+	cell1.value = &a;
+	cell1.dtype = intergId;
+	int b = 2;
+	cell1.update_value(b);
+	std::cout << cell1.to_string();
+}
+
+
 
 
