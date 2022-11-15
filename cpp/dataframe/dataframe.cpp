@@ -1,4 +1,4 @@
-#pragma once
+// #pragma once
 #include <vector>
 #include <string>
 #include <map>
@@ -235,7 +235,6 @@ inline DataFrame::DataFrame()
 template <class T>
 void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
 {
-	auto newVec = new std::vector<Cell *>;
 	ObjectId Id = intergId;
 	if (std::is_same<int, T>::value)
 	{
@@ -268,13 +267,21 @@ void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
 		Cell *newCell = new Cell{};
 		newCell->value = &data[i];
 		newCell->dtype = Id;
+		auto newVec = new std::vector<Cell *>;
+		if (this->column_length != 0)
+		{
+			newVec = &this->data[i];
+		}
 		newVec->emplace_back(newCell);
+		if (this->column_length == 0)
+		{
+			this->data.emplace_back(*newVec);
+		}
 	}
 	this->columnList.emplace_back(columnName);
 	this->column_length += 1;
 	this->dtypeList.emplace_back(Id);
 	this->row_length = std::max(row_length, int(data.size()));
-	this->data.emplace_back(*newVec);
 }
 inline void DataFrame::to_csv(std::string &&fileName)
 {
@@ -286,6 +293,18 @@ inline void DataFrame::to_csv(std::string &&fileName)
 	{
 		std::cout << "打开文件失败" << std::endl;
 		return;
+	}
+	for (int i = 0; i < this->column_length; i++)
+	{
+		ss << this->columnList[i];
+		if (i != this->column_length - 1)
+		{
+			ss << ", ";
+		}
+		else
+		{
+			ss << "\n";
+		}
 	}
 	for (int i = 0; i < this->data.size(); i++)
 	{
@@ -312,7 +331,11 @@ int main()
 	vec.emplace_back(1);
 	vec.emplace_back(2);
 	vec.emplace_back(1);
+	std::vector<int> vec1;
+	vec1.emplace_back(1);
+	vec1.emplace_back(2);
+	vec1.emplace_back(1);
 	df.insert("first", vec);
-	std::cout << &df << std::endl;
+	df.insert("second", vec1);
 	df.to_csv("testdf.csv");
 }
