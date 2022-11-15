@@ -23,7 +23,7 @@ class Cell
 {
 public:
 	// 储存cell的值指针
-	void* value;
+	void *value;
 
 	// 储存cell的值类型
 	ObjectId dtype;
@@ -33,7 +33,7 @@ public:
 
 	// 修改cell值，传入的值可能有多种数据类型
 	template <class T>
-	void update_value(T& _in);
+	void update_value(T &_in);
 
 	// 修改cell数据类型
 	void update_dtype(int objId);
@@ -65,23 +65,23 @@ public:
 	std::vector<int> dtypeList;
 
 	// 储存数据
-	std::vector<std::vector<Cell*>> data;
+	std::vector<std::vector<Cell *>> data;
 
 	// 构造函数
 	DataFrame();
 
 	// 插入列，列可能有多种数据结构
-	template<class T>
-	void insert(std::string&& columnName, std::vector<T>& data);
+	template <class T>
+	void insert(std::string &&columnName, std::vector<T> &data);
 
 	// 根据列名查找列
-	std::vector<std::string> findCol(std::string&& columnName);
+	std::vector<std::string> findCol(std::string &&columnName);
 
 	// 根据列名取出对应列
-	Series get(std::string&& columnName);
+	Series get(std::string &&columnName);
 
 	// 输出到csv文件
-	void to_csv(std::string&& fileName);
+	void to_csv(std::string &&fileName);
 
 	// 深拷贝函数
 	DataFrame copy();
@@ -93,7 +93,7 @@ private:
 };
 
 template <class T>
-inline void Cell::update_value(T& _in)
+inline void Cell::update_value(T &_in)
 {
 	if (std::is_same<int, T>::value)
 	{
@@ -170,55 +170,56 @@ std::string Cell::to_string()
 	switch (this->dtype)
 	{
 	case intergId:
-		return std::to_string(*(int*)this->value);
+		return std::to_string(*(int *)this->value);
 	case floatId:
-		return std::to_string(*(float*)this->value);
+		return std::to_string(*(float *)this->value);
 	case doubleId:
-		return std::to_string(*(double*)this->value);
+		return std::to_string(*(double *)this->value);
 	case longId:
-		return std::to_string(*(long*)this->value);
+		return std::to_string(*(long *)this->value);
 	case stringId:
-		return *(std::string*)this->value;
+		return *(std::string *)this->value;
 	default:
 		break;
 	}
 	return std::string();
 }
-Cell Cell::copy() {
+Cell Cell::copy()
+{
 	Cell newCell{};
 	switch (this->dtype)
 	{
 	case intergId:
 	{
-		int tem_i = *(int*)value;
+		int tem_i = *(int *)value;
 		newCell.value = &tem_i;
 		newCell.dtype = intergId;
 		break;
 	}
 	case floatId:
 	{
-		float tem_f = *(float*)value;
+		float tem_f = *(float *)value;
 		newCell.value = &tem_f;
 		newCell.dtype = floatId;
 		break;
 	}
 	case doubleId:
 	{
-		double tem_d = *(double*)value;
+		double tem_d = *(double *)value;
 		newCell.value = &tem_d;
 		newCell.dtype = doubleId;
 		break;
 	}
 	case longId:
 	{
-		long tem_l = *(long*)value;
+		long tem_l = *(long *)value;
 		newCell.value = &tem_l;
 		newCell.dtype = longId;
 		break;
 	}
 	case stringId:
 	{
-		std::string tem_s = *(std::string*)value;
+		std::string tem_s = *(std::string *)value;
 		newCell.value = &tem_s;
 		newCell.dtype = stringId;
 		break;
@@ -231,10 +232,10 @@ Cell Cell::copy() {
 inline DataFrame::DataFrame()
 {
 }
-template<class T>
-void DataFrame::insert(std::string&& columnName, std::vector<T>& data)
+template <class T>
+void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
 {
-	auto newVec = new std::vector<Cell*>;
+	auto newVec = new std::vector<Cell *>;
 	ObjectId Id = intergId;
 	if (std::is_same<int, T>::value)
 	{
@@ -261,9 +262,10 @@ void DataFrame::insert(std::string&& columnName, std::vector<T>& data)
 		std::cout << "无类型" << std::endl;
 		return;
 	}
-	for (int i = 0; i < data.size(); i++) {
+	for (int i = 0; i < data.size(); i++)
+	{
 		// 如果不使用new，则开辟在栈区
-		Cell* newCell = new Cell{};
+		Cell *newCell = new Cell{};
 		newCell->value = &data[i];
 		newCell->dtype = Id;
 		newVec->emplace_back(newCell);
@@ -274,7 +276,7 @@ void DataFrame::insert(std::string&& columnName, std::vector<T>& data)
 	this->row_length = std::max(row_length, int(data.size()));
 	this->data.emplace_back(*newVec);
 }
-inline void DataFrame::to_csv(std::string&& fileName)
+inline void DataFrame::to_csv(std::string &&fileName)
 {
 	// 暂且写在一起，且不做多线程优化
 	std::ofstream outFile;
@@ -285,10 +287,13 @@ inline void DataFrame::to_csv(std::string&& fileName)
 		std::cout << "打开文件失败" << std::endl;
 		return;
 	}
-	for (int i = 0; i < this->data.size(); i++) {
-		for (int j = 0; j < this->data[i].size(); j++) {
+	for (int i = 0; i < this->data.size(); i++)
+	{
+		for (int j = 0; j < this->data[i].size(); j++)
+		{
 			ss << this->data[i][j]->to_string();
-			if (j != this->data[i].size() - 1) {
+			if (j != this->data[i].size() - 1)
+			{
 				ss << ", ";
 			}
 		}
