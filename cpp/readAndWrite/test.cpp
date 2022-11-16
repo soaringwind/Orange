@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <map>
 using namespace std;
 
 class Base
@@ -82,15 +83,28 @@ public:
 template<class T>
 T Cell::data;
 
+
+
+int func() {
+    int a = 1;
+    cout << &a << endl;
+    return a;
+}
+
 int main()
 {
-    Cell cell1(1);
-    Cell cell2{2.f};
-    Cell cell3{"111"};
-    cout << cell1.getValue() << cell2.getValue() << cell3.getValue() << endl;
-    Unit<int> unit1;
-    unit1.data = 1;
-    cout << unit1.getData() << endl;
+    multimap<char, int>mymultimap{ {'a',10},{'b',20},{'b',15}, {'c',30} };
+    cout << mymultimap.find('b')->second << endl;
+    // vector<int> vec;
+    // vec.emplace_back(func());
+    // cout <<  &vec[0] << endl;
+    // Cell cell1(1);
+    // Cell cell2{2.f};
+    // Cell cell3{"111"};
+    // cout << cell1.getValue() << cell2.getValue() << cell3.getValue() << endl;
+    // Unit<int> unit1;
+    // unit1.data = 1;
+    // cout << unit1.getData() << endl;
     // vector<Base*> vec;
     // Value<int>* v1 = new Value<int>;
     // v1->m_key = 0.0;

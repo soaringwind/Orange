@@ -38,6 +38,10 @@ public:
 	// 修改cell数据类型
 	void update_dtype(int objId);
 
+	// 得到cell的值
+	template <class T>
+	void getCell(T &_in);
+
 	// 深拷贝构造函数
 	Cell copy();
 };
@@ -58,7 +62,7 @@ public:
 	// 储存列数
 	int column_length = 0;
 
-	// 储存列名
+	// 储存列名(这里应该考虑map/multi_map)
 	std::vector<std::string> columnList;
 
 	// 储存列数据类型
@@ -184,6 +188,11 @@ std::string Cell::to_string()
 	}
 	return std::string();
 }
+template <class T>
+void Cell::getCell(T &_in)
+{
+	_in = *(T *)this->value;
+}
 Cell Cell::copy()
 {
 	Cell newCell{};
@@ -283,6 +292,9 @@ void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
 	this->dtypeList.emplace_back(Id);
 	this->row_length = std::max(row_length, int(data.size()));
 }
+std::vector<std::string> DataFrame::findCol(std::string &&columnName) {
+
+}
 inline void DataFrame::to_csv(std::string &&fileName)
 {
 	// 暂且写在一起，且不做多线程优化
@@ -324,8 +336,16 @@ inline void DataFrame::to_csv(std::string &&fileName)
 inline DataFrame::~DataFrame()
 {
 }
-int main()
-{
+void testCell() {
+	Cell cell1;
+	int a = 1;
+	cell1.value = &a;
+	cell1.dtype = intergId;
+	int b;
+	cell1.getCell(b);
+	std::cout << b << std::endl;
+}
+void testDf() {
 	DataFrame df{};
 	std::vector<int> vec;
 	vec.emplace_back(1);
@@ -338,4 +358,8 @@ int main()
 	df.insert("first", vec);
 	df.insert("second", vec1);
 	df.to_csv("testdf.csv");
+}
+int main()
+{
+	testCell();
 }
