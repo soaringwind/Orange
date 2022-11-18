@@ -45,4 +45,6 @@ map[k] = v;
 2. 异质链表
 3. 模板元编程（https://www.cnblogs.com/apocelipes/p/11289840.html）
 4. 可变参数模板
+5. 将函数作为参数传入另一函数。
+   其实是传入函数指针，格式如下returnType(星参数名)(函数参数)=函数名
 
