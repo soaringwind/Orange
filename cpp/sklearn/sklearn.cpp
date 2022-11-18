@@ -1,4 +1,4 @@
-// #pragma once
+#pragma once
 #include <vector>
 #include <numeric>
 #include <iostream>
@@ -8,7 +8,7 @@
 #include <stack>
 
 template <class T1, class T2>
-double Pearson(std::vector<T1> &_in1, std::vector<T2> &_in2)
+double Pearson(std::vector<T1>& _in1, std::vector<T2>& _in2)
 {
 	if (_in1.size() != _in2.size())
 	{
@@ -26,7 +26,7 @@ double Pearson(std::vector<T1> &_in1, std::vector<T2> &_in2)
 }
 
 template <class T1, class T2>
-double Spearman(std::vector<T1> &_in1, std::vector<T2> &_in2)
+double Spearman(std::vector<T1>& _in1, std::vector<T2>& _in2)
 {
 	if (_in1.size() != _in2.size())
 	{
@@ -34,7 +34,7 @@ double Spearman(std::vector<T1> &_in1, std::vector<T2> &_in2)
 		return 0.f;
 	}
 	size_t n = _in1.size();
-	double spearman{0};
+	double spearman{ 0 };
 	std::vector<int> _in1Index;
 	std::vector<int> _in2Index;
 	for (int i = 0; i < n; i++)
@@ -43,9 +43,9 @@ double Spearman(std::vector<T1> &_in1, std::vector<T2> &_in2)
 		_in2Index.emplace_back(i);
 	}
 	std::sort(_in1Index.begin(), _in1Index.end(), [_in1, _in1Index](int a, int b)
-			  { return _in1[_in1Index[a]] < _in1[_in1Index[b]]; });
+		{ return _in1[_in1Index[a]] < _in1[_in1Index[b]]; });
 	std::sort(_in2Index.begin(), _in2Index.end(), [_in2, _in2Index](int a, int b)
-			  { return _in2[_in2Index[a]] < _in2[_in2Index[b]]; });
+		{ return _in2[_in2Index[a]] < _in2[_in2Index[b]]; });
 	for (int i = 0; i < n; i++)
 	{
 		spearman += pow((_in1Index[i] - _in2Index[i]), 2);
@@ -65,7 +65,7 @@ float calcDistance(std::vector<T> data1, std::vector<T> data2)
 }
 
 template <class T>
-std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts)
+std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts, float(*func)(std::vector<T>, std::vector<T>)=calcDistance)
 {
 	// 数据的数量
 	int n = data.size();
@@ -85,14 +85,14 @@ std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts
 	// 每个数据与别的数据的距离
 	std::unordered_map<int, std::vector<float>> distanceMap = std::unordered_map<int, std::vector<float>>();
 
-	// 确定核心点
+	// 确定核心点并计算每个点相互之间的距离, 复杂度实际上是k*n**2
 	for (int i = 0; i < n; ++i)
 	{
 		int num = 0;
 		std::vector<float> perDis;
 		for (int j = 0; j < n; ++j)
 		{
-			float res = calcDistance(data[i], data[j]);
+			float res = func(data[i], data[j]);
 			if (res < eps)
 			{
 				num += 1;
@@ -129,6 +129,7 @@ std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts
 			ps.pop();
 			visited[core] = true;
 			auto coreDis = distanceMap[core];
+			// 搜索距离核心点满足条件的点数
 			for (int j = 0; j < coreDis.size(); ++j)
 			{
 				if (visited[j] || coreDis[j] > eps)
@@ -147,6 +148,9 @@ std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts
 		}
 	}
 	return clusters;
+}
+void knn() {
+
 }
 void testDBscan()
 {
