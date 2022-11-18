@@ -272,3 +272,19 @@ CBAM的思想和前面的SeNet网络其实是很相似的，它提出一种简�
 
 ## mongodb问题
 python可变数据结构导致问题，在插入数据的时候，为了防止有重复的键，使用了try，结果程序在运行的时候自己加了_id字段导致后续一直更新出错。
+
+## DBSCAN
+dbscan是一个常见的聚类算法，它的优势就是可以根据密度进行聚类，在这里有设计到KNN的思想可以进行参考。
+https://github.com/Eleobert/dbscan/blob/master/dbscan.cpp
+https://blog.csdn.net/k76853/article/details/50440182
+https://www.cnblogs.com/pinard/p/6208966.html
+https://www.cnblogs.com/pinard/p/6061661.html
+https://en.wikipedia.org/wiki/DBSCAN
+
+## python论坛
+https://github.com/vicalloy/lbforum-site
+
+## 相关系数
+Pearson相关系数：它适用于线性结构，且不会根据值相对变化而发生改变。
+Spearman相关系数：它主要是看两组数据是否有相同的变化趋势，而不管是否线性。
+Kerndel相关系数：结合。
