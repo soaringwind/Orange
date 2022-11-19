@@ -67,11 +67,13 @@ float calcDistance(std::vector<T> data1, std::vector<T> data2)
 template <class T>
 std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts, float(*func)(std::vector<T>, std::vector<T>)=calcDistance)
 {
+	// 以下实现为brute算法时间效率k*n**2 (如果传入的不是可以直接用欧式距离衡量的统一进行brute算法)
+
 	// 数据的数量
 	int n = data.size();
 
 	// 返回的分类结果
-	std::vector<int> clusters = std::vector<int>(n);
+	std::vector<int> clusters = std::vector<int>(n, -1);
 
 	// 是否已经被访问
 	std::vector<bool> visited = std::vector<bool>(n);
@@ -85,7 +87,7 @@ std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts
 	// 每个数据与别的数据的距离
 	std::unordered_map<int, std::vector<float>> distanceMap = std::unordered_map<int, std::vector<float>>();
 
-	// 确定核心点并计算每个点相互之间的距离, 复杂度实际上是k*n**2
+	// 确定核心点并计算每个点相互之间的距离, 复杂度实际上是k*n**2, 空间换时间
 	for (int i = 0; i < n; ++i)
 	{
 		int num = 0;
@@ -111,10 +113,14 @@ std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts
 		}
 	}
 
+	// 打乱索引
+	srand(n);
+	std::random_shuffle(corePoint.begin(), corePoint.end());
+
 	// 核心点扩展
 	std::stack<int> ps;
 	int core;
-	int clusterNum = 0;
+	int clusterNum = -1;
 	for (int i = 0; i < corePoint.size(); ++i)
 	{
 		core = corePoint[i];

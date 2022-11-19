@@ -81,11 +81,18 @@ public:
 	// 根据列名查找列
 	std::vector<std::string> findCol(std::string &&columnName);
 
+	// 拿到df数据矩阵
+	template <class T>
+	std::vector<std::vector<T>> values();
+
 	// 根据列名取出对应列
 	Series get(std::string &&columnName);
 
 	// 输出到csv文件
 	void to_csv(std::string &&fileName);
+
+	// 从csv中读取数据
+	void read_csv(std::string &&fileName);
 
 	// 深拷贝函数
 	DataFrame copy();
@@ -292,8 +299,25 @@ void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
 	this->dtypeList.emplace_back(Id);
 	this->row_length = std::max(row_length, int(data.size()));
 }
-std::vector<std::string> DataFrame::findCol(std::string &&columnName) {
-
+std::vector<std::string> DataFrame::findCol(std::string &&columnName)
+{
+	std::vector<std::string> res;
+	return res;
+}
+template <class T>
+std::vector<std::vector<T>> DataFrame::values()
+{
+	std::vector<std::vector<T>> res;
+	for (int i = 0; i < this->row_length - 1; ++i)
+	{
+		std::vector<T> *tem = new std::vector<T>;
+		for (int j = 0; j < this->column_length; ++j)
+		{
+			tem->emplace_back(*(T *)this->data[i][j]->value);
+		}
+		res.emplace_back(*tem);
+	}
+	return res;
 }
 inline void DataFrame::to_csv(std::string &&fileName)
 {
@@ -333,10 +357,41 @@ inline void DataFrame::to_csv(std::string &&fileName)
 	outFile << ss.str();
 	outFile.close();
 }
+void DataFrame::read_csv(std::string &&fileName)
+{
+	std::ifstream inFile;
+	std::string token;
+	inFile.open(fileName);
+	while (std::getline(inFile, token))
+	{
+		++this->row_length;
+		std::istringstream iss(token);
+		std::vector<Cell *> *temData = new std::vector<Cell *>;
+		while (std::getline(iss, token, ','))
+		{
+			if (this->row_length <= 1)
+			{
+				++this->column_length;
+				this->columnList.emplace_back(token);
+				continue;
+			}
+			Cell *newCell = new Cell{};
+			double *tem = new double;
+			*tem = std::stod(token);
+			newCell->value = tem;
+			newCell->dtype = doubleId;
+			temData->emplace_back(newCell);
+		}
+		if (this->row_length > 1)
+			this->data.emplace_back(*temData);
+	}
+}
+
 inline DataFrame::~DataFrame()
 {
 }
-void testCell() {
+void testCell()
+{
 	Cell cell1;
 	int a = 1;
 	cell1.value = &a;
@@ -345,7 +400,8 @@ void testCell() {
 	cell1.getCell(b);
 	std::cout << b << std::endl;
 }
-void testDf() {
+void testUseDf()
+{
 	DataFrame df{};
 	std::vector<int> vec;
 	vec.emplace_back(1);
@@ -359,7 +415,16 @@ void testDf() {
 	df.insert("second", vec1);
 	df.to_csv("testdf.csv");
 }
+void testReadDf()
+{
+	DataFrame df{};
+	df.read_csv(R"(C:\Users\weitao\Desktop\Untitled Folder\cpp\sklearn\data.csv)");
+	std::cout << df.column_length << " " << df.row_length << std::endl;
+	std::cout << df.data[0][0]->to_string() << std::endl;
+	auto res = df.values<double>();
+	std::cout << std::to_string(res[0][0]) << std::endl;
+}
 int main()
 {
-	testCell();
+	testReadDf();
 }

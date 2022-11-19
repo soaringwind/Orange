@@ -8,15 +8,15 @@
 
 string本质上是一个类，内部还是char*。
 
-### 2. map/multi_map/unorder_map
+#### 2. map/multi_map/unorder_map
 
 字典数据结构，本身应该无序，但c++中map和multi-map使用的二叉堆的数据结构，因此内部会对key进行排序，查找时的时间效率是logn，unorder_map则是真正意义上的无序字典。
 
-```
+```c++
 // 增删改查
 // 1. 增
-map.insert(pair<T, U>(k, v);
-map.insert(std::map<T, U>::value_type(k, v);
+map.insert(pair<T, U>(k, v));
+map.insert(std::map<T, U>::value_type(k, v));
 map[k] = v;
 
 // 2. 查
@@ -30,15 +30,22 @@ auto find_it = map.find(k);
 cout << find_it->first << find_it->second;
 
 // 3. 删除
+map.erase(iterator)
 
 // 4. 修改
 map[k] = v;
 ```
 
-### 3. tuple
+#### 3. tuple
 
-### 4. stack
+#### 4. stack
 这个实际上就是容器适配器，类似于栈的数据结构。注意pop方法是没有返回值的，如果想拿到栈顶元素，需要使用top方法。
+
+#### 5. vector
+vector容器是c++中可变长的数组，一般情况下使用vector较多，如果没有特别情况，使用它即可。
+
+#### 6. deque
+deque是双端链表，因此其头插和尾插的效率很高，头删和尾删的效率也很高，但查找效率很低。
 
 ## 小技巧
 

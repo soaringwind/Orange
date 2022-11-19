@@ -4,6 +4,11 @@
 #include <string>
 #include <unordered_map>
 #include <map>
+#include <algorithm>
+#include <ctime>
+#include <regex>
+
+
 using namespace std;
 
 class Base
@@ -85,16 +90,56 @@ T Cell::data;
 
 
 
-int func() {
-    int a = 1;
-    cout << &a << endl;
-    return a;
+int func(int i) {
+    cout << i << ", ";
+    return 0;
+}
+
+void stringSplit(string str, const char* delim) {
+    ifstream inFile;
+    inFile.open(R"(C:\Users\weitao\Desktop\Untitled Folder\cpp\sklearn\data.csv)");
+    string token;
+    while (getline(inFile, token)) {
+        istringstream iss(token);
+        while (getline(iss, token, *delim))
+        {                                                                                                                                                                                                          
+            /* code */
+            cout << token << endl;
+        }
+        break;
+    }
+
+    
 }
 
 int main()
 {
-    multimap<char, int>mymultimap{ {'a',10},{'b',20},{'b',15}, {'c',30} };
-    cout << mymultimap.find('b')->second << endl;
+    // multimap<char, int>mymultimap{ {'a',10},{'b',20},{'b',15}, {'c',30} };
+    // cout << mymultimap.find('b')->second << endl;
+
+    // vector<int> vec;
+    // for (int i=0; i<10; i++) {
+    //     vec.emplace_back(i);
+    // }
+    // for_each(vec.begin(), vec.end(), func);
+    // srand(12);
+    // random_shuffle(vec.begin(), vec.end());
+    // cout << "\n";
+    // for_each(vec.begin(), vec.end(), func);
+
+    // string text = "Quick brown fox.";
+    // regex ws_re("\\s+");
+    // vector<string> v(sregex_token_iterator(text.begin(), text.end(), ws_re, -1), sregex_token_iterator());
+    // for (auto&& s: v) cout << s << "\n";
+
+    // string str("this, is, a test");
+    // stringSplit(str, ",");
+
+    vector<int>* a = new vector<int>;
+    a->emplace_back(1);
+    cout << (*a)[0] << endl;
+
+    // cout << stoi(" 100") << endl;
     // vector<int> vec;
     // vec.emplace_back(func());
     // cout <<  &vec[0] << endl;

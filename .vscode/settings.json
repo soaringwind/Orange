@@ -47,6 +47,10 @@
         "climits": "cpp",
         "ios": "cpp",
         "queue": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "ctime": "cpp",
+        "cstring": "cpp",
+        "bitset": "cpp",
+        "regex": "cpp"
     }
 }
