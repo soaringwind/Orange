@@ -81,12 +81,19 @@ public:
 	// 根据列名查找列
 	std::vector<std::string> findCol(std::string &&columnName);
 
+	// 查找列索引
+	int findColIndex(std::string &&columnName);
+
 	// 拿到df数据矩阵
 	template <class T>
 	std::vector<std::vector<T>> values();
 
 	// 根据列名取出对应列
 	Series get(std::string &&columnName);
+
+	// 根据列名取对应列数据
+	template <class T>
+	std::vector<T> getColValue(std::string &&columnName);
 
 	// 输出到csv文件
 	void to_csv(std::string &&fileName);
@@ -304,6 +311,19 @@ std::vector<std::string> DataFrame::findCol(std::string &&columnName)
 	std::vector<std::string> res;
 	return res;
 }
+int DataFrame::findColIndex(std::string &&columnName)
+{
+	int res = -1;
+	for (int i = 0; i < this->column_length; i++)
+	{
+		if (this->columnList[i] == columnName)
+		{
+			res = i;
+			break;
+		}
+	}
+	return res;
+}
 template <class T>
 std::vector<std::vector<T>> DataFrame::values()
 {
@@ -316,6 +336,18 @@ std::vector<std::vector<T>> DataFrame::values()
 			tem->emplace_back(*(T *)this->data[i][j]->value);
 		}
 		res.emplace_back(*tem);
+	}
+	return res;
+}
+template <class T>
+std::vector<T> DataFrame::getColValue(std::string &&columnName)
+{
+	std::vector<T> res;
+	auto colIndex = this->findColIndex(std::move(columnName));
+	if (colIndex != -1) {
+		for (int i=0; i<this->row_length-1; i++) {
+			res.emplace_back(*(T*)this->data[i][colIndex]->value);
+		}
 	}
 	return res;
 }
@@ -359,6 +391,7 @@ inline void DataFrame::to_csv(std::string &&fileName)
 }
 void DataFrame::read_csv(std::string &&fileName)
 {
+	// 目前实现的是读入double, 计划的实现是能够读入double/string两种格式
 	std::ifstream inFile;
 	std::string token;
 	inFile.open(fileName);
@@ -373,6 +406,7 @@ void DataFrame::read_csv(std::string &&fileName)
 			{
 				++this->column_length;
 				this->columnList.emplace_back(token);
+				this->dtypeList.emplace_back(doubleId);
 				continue;
 			}
 			Cell *newCell = new Cell{};
@@ -424,6 +458,9 @@ void testReadDf()
 	auto res = df.values<double>();
 	std::cout.precision(16);
 	std::cout << res[0][0] << std::endl;
+	std::cout << df.findColIndex("0") << std::endl;
+	auto colRes = df.getColValue<double>("0");
+	std::cout << colRes[0] << std::endl;
 }
 int main()
 {
