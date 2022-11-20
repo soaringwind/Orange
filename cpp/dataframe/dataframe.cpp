@@ -422,7 +422,8 @@ void testReadDf()
 	std::cout << df.column_length << " " << df.row_length << std::endl;
 	std::cout << df.data[0][0]->to_string() << std::endl;
 	auto res = df.values<double>();
-	std::cout << std::to_string(res[0][0]) << std::endl;
+	std::cout.precision(16);
+	std::cout << res[0][0] << std::endl;
 }
 int main()
 {

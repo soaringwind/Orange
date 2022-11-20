@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <ctime>
 #include <regex>
+#include <numeric>
+#include <limits>
+#include <stdio.h>
 
 
 using namespace std;
@@ -135,9 +138,30 @@ int main()
     // string str("this, is, a test");
     // stringSplit(str, ",");
 
-    vector<int>* a = new vector<int>;
-    a->emplace_back(1);
-    cout << (*a)[0] << endl;
+    // vector<int>* a = new vector<int>;
+    // a->emplace_back(1);
+    // cout << (*a)[0] << endl;
+
+    int prec = numeric_limits<double>::digits10;
+    double tem;
+    string value = "1.124124214124";
+    tem = std::stod(value);
+    stringstream ss;
+    // ss << value;
+    // cout << ss.str() << endl;
+    // ss >> tem;
+    // cout << tem << endl;
+    // ss.clear();
+    // ss.str("");
+    // ss.precision(value.length());
+    // ss << tem;
+    // cout << ss.str() << endl;
+    // cout.precision(16);
+    // cout << tem << endl;
+    ss.precision(16);
+    ss << tem;
+    cout.precision(16);
+    cout << ss.str() << endl;
 
     // cout << stoi(" 100") << endl;
     // vector<int> vec;
