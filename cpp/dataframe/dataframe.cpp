@@ -1,4 +1,4 @@
-// #pragma once
+#pragma once
 #include <vector>
 #include <string>
 #include <map>
@@ -23,7 +23,7 @@ class Cell
 {
 public:
 	// 储存cell的值指针
-	void *value;
+	void* value;
 
 	// 储存cell的值类型
 	ObjectId dtype;
@@ -33,14 +33,14 @@ public:
 
 	// 修改cell值，传入的值可能有多种数据类型
 	template <class T>
-	void update_value(T &_in);
+	void update_value(T& _in);
 
 	// 修改cell数据类型
 	void update_dtype(int objId);
 
 	// 得到cell的值
 	template <class T>
-	void getCell(T &_in);
+	void getCell(T& _in);
 
 	// 深拷贝构造函数
 	Cell copy();
@@ -69,37 +69,37 @@ public:
 	std::vector<int> dtypeList;
 
 	// 储存数据
-	std::vector<std::vector<Cell *>> data;
+	std::vector<std::vector<Cell*>> data;
 
 	// 构造函数
 	DataFrame();
 
 	// 插入列，列可能有多种数据结构
 	template <class T>
-	void insert(std::string &&columnName, std::vector<T> &data);
+	void insert(std::string&& columnName, std::vector<T>& data);
 
 	// 根据列名查找列
-	std::vector<std::string> findCol(std::string &&columnName);
+	std::vector<std::string> findCol(std::string&& columnName);
 
 	// 查找列索引
-	int findColIndex(std::string &&columnName);
+	int findColIndex(std::string&& columnName);
 
 	// 拿到df数据矩阵
 	template <class T>
 	std::vector<std::vector<T>> values();
 
 	// 根据列名取出对应列
-	Series get(std::string &&columnName);
+	Series get(std::string&& columnName);
 
 	// 根据列名取对应列数据
 	template <class T>
-	std::vector<T> getColValue(std::string &&columnName);
+	std::vector<T> getColValue(std::string&& columnName);
 
 	// 输出到csv文件
-	void to_csv(std::string &&fileName);
+	void to_csv(std::string&& fileName);
 
 	// 从csv中读取数据
-	void read_csv(std::string &&fileName);
+	void read_csv(std::string&& fileName);
 
 	// 深拷贝函数
 	DataFrame copy();
@@ -111,7 +111,7 @@ private:
 };
 
 template <class T>
-inline void Cell::update_value(T &_in)
+inline void Cell::update_value(T& _in)
 {
 	if (std::is_same<int, T>::value)
 	{
@@ -188,24 +188,24 @@ std::string Cell::to_string()
 	switch (this->dtype)
 	{
 	case intergId:
-		return std::to_string(*(int *)this->value);
+		return std::to_string(*(int*)this->value);
 	case floatId:
-		return std::to_string(*(float *)this->value);
+		return std::to_string(*(float*)this->value);
 	case doubleId:
-		return std::to_string(*(double *)this->value);
+		return std::to_string(*(double*)this->value);
 	case longId:
-		return std::to_string(*(long *)this->value);
+		return std::to_string(*(long*)this->value);
 	case stringId:
-		return *(std::string *)this->value;
+		return *(std::string*)this->value;
 	default:
 		break;
 	}
 	return std::string();
 }
 template <class T>
-void Cell::getCell(T &_in)
+void Cell::getCell(T& _in)
 {
-	_in = *(T *)this->value;
+	_in = *(T*)this->value;
 }
 Cell Cell::copy()
 {
@@ -214,35 +214,35 @@ Cell Cell::copy()
 	{
 	case intergId:
 	{
-		int tem_i = *(int *)value;
+		int tem_i = *(int*)value;
 		newCell.value = &tem_i;
 		newCell.dtype = intergId;
 		break;
 	}
 	case floatId:
 	{
-		float tem_f = *(float *)value;
+		float tem_f = *(float*)value;
 		newCell.value = &tem_f;
 		newCell.dtype = floatId;
 		break;
 	}
 	case doubleId:
 	{
-		double tem_d = *(double *)value;
+		double tem_d = *(double*)value;
 		newCell.value = &tem_d;
 		newCell.dtype = doubleId;
 		break;
 	}
 	case longId:
 	{
-		long tem_l = *(long *)value;
+		long tem_l = *(long*)value;
 		newCell.value = &tem_l;
 		newCell.dtype = longId;
 		break;
 	}
 	case stringId:
 	{
-		std::string tem_s = *(std::string *)value;
+		std::string tem_s = *(std::string*)value;
 		newCell.value = &tem_s;
 		newCell.dtype = stringId;
 		break;
@@ -256,7 +256,7 @@ inline DataFrame::DataFrame()
 {
 }
 template <class T>
-void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
+void DataFrame::insert(std::string&& columnName, std::vector<T>& data)
 {
 	ObjectId Id = intergId;
 	if (std::is_same<int, T>::value)
@@ -287,10 +287,10 @@ void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
 	for (int i = 0; i < data.size(); i++)
 	{
 		// 如果不使用new，则开辟在栈区
-		Cell *newCell = new Cell{};
+		Cell* newCell = new Cell{};
 		newCell->value = &data[i];
 		newCell->dtype = Id;
-		auto newVec = new std::vector<Cell *>;
+		auto newVec = new std::vector<Cell*>;
 		if (this->column_length != 0)
 		{
 			newVec = &this->data[i];
@@ -306,12 +306,12 @@ void DataFrame::insert(std::string &&columnName, std::vector<T> &data)
 	this->dtypeList.emplace_back(Id);
 	this->row_length = std::max(row_length, int(data.size()));
 }
-std::vector<std::string> DataFrame::findCol(std::string &&columnName)
+std::vector<std::string> DataFrame::findCol(std::string&& columnName)
 {
 	std::vector<std::string> res;
 	return res;
 }
-int DataFrame::findColIndex(std::string &&columnName)
+int DataFrame::findColIndex(std::string&& columnName)
 {
 	int res = -1;
 	for (int i = 0; i < this->column_length; i++)
@@ -330,28 +330,28 @@ std::vector<std::vector<T>> DataFrame::values()
 	std::vector<std::vector<T>> res;
 	for (int i = 0; i < this->row_length - 1; ++i)
 	{
-		std::vector<T> *tem = new std::vector<T>;
+		std::vector<T>* tem = new std::vector<T>;
 		for (int j = 0; j < this->column_length; ++j)
 		{
-			tem->emplace_back(*(T *)this->data[i][j]->value);
+			tem->emplace_back(*(T*)this->data[i][j]->value);
 		}
 		res.emplace_back(*tem);
 	}
 	return res;
 }
 template <class T>
-std::vector<T> DataFrame::getColValue(std::string &&columnName)
+std::vector<T> DataFrame::getColValue(std::string&& columnName)
 {
 	std::vector<T> res;
 	auto colIndex = this->findColIndex(std::move(columnName));
 	if (colIndex != -1) {
-		for (int i=0; i<this->row_length-1; i++) {
+		for (int i = 0; i < this->row_length - 1; i++) {
 			res.emplace_back(*(T*)this->data[i][colIndex]->value);
 		}
 	}
 	return res;
 }
-inline void DataFrame::to_csv(std::string &&fileName)
+inline void DataFrame::to_csv(std::string&& fileName)
 {
 	// 暂且写在一起，且不做多线程优化
 	std::ofstream outFile;
@@ -389,7 +389,7 @@ inline void DataFrame::to_csv(std::string &&fileName)
 	outFile << ss.str();
 	outFile.close();
 }
-void DataFrame::read_csv(std::string &&fileName)
+void DataFrame::read_csv(std::string&& fileName)
 {
 	// 目前实现的是读入double, 计划的实现是能够读入double/string两种格式
 	std::ifstream inFile;
@@ -399,7 +399,7 @@ void DataFrame::read_csv(std::string &&fileName)
 	{
 		++this->row_length;
 		std::istringstream iss(token);
-		std::vector<Cell *> *temData = new std::vector<Cell *>;
+		std::vector<Cell*>* temData = new std::vector<Cell*>;
 		while (std::getline(iss, token, ','))
 		{
 			if (this->row_length <= 1)
@@ -409,8 +409,8 @@ void DataFrame::read_csv(std::string &&fileName)
 				this->dtypeList.emplace_back(doubleId);
 				continue;
 			}
-			Cell *newCell = new Cell{};
-			double *tem = new double;
+			Cell* newCell = new Cell{};
+			double* tem = new double;
 			*tem = std::stod(token);
 			newCell->value = tem;
 			newCell->dtype = doubleId;
@@ -452,7 +452,7 @@ void testUseDf()
 void testReadDf()
 {
 	DataFrame df{};
-	df.read_csv(R"(C:\Users\weitao\Desktop\Untitled Folder\cpp\sklearn\data.csv)");
+	df.read_csv(R"(./data.csv)");
 	std::cout << df.column_length << " " << df.row_length << std::endl;
 	std::cout << df.data[0][0]->to_string() << std::endl;
 	auto res = df.values<double>();
@@ -462,7 +462,8 @@ void testReadDf()
 	auto colRes = df.getColValue<double>("0");
 	std::cout << colRes[0] << std::endl;
 }
-int main()
+int main3()
 {
 	testReadDf();
+	return 0;
 }
