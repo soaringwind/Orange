@@ -142,11 +142,11 @@ int main()
     // a->emplace_back(1);
     // cout << (*a)[0] << endl;
 
-    int prec = numeric_limits<double>::digits10;
-    double tem;
-    string value = "1.124124214124";
-    tem = std::stod(value);
-    stringstream ss;
+    // int prec = numeric_limits<double>::digits10;
+    // double tem;
+    // string value = "1.124124214124";
+    // tem = std::stod(value);
+    // stringstream ss;
     // ss << value;
     // cout << ss.str() << endl;
     // ss >> tem;
@@ -158,10 +158,17 @@ int main()
     // cout << ss.str() << endl;
     // cout.precision(16);
     // cout << tem << endl;
-    ss.precision(16);
-    ss << tem;
-    cout.precision(16);
-    cout << ss.str() << endl;
+    // ss.precision(16);
+    // ss << tem;
+    // cout.precision(16);
+    // cout << ss.str() << endl;
+    int dim = 1;
+    vector<int> ptIndex{1, 2, 3, 0};
+    vector<vector<int>> data{{1,2}, {2,3}, {4, 1}, {5, 10}};
+	std::nth_element(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2, ptIndex.end(), [&](int& i, int& j) {return data[i][dim] < data[j][dim]; });
+    for_each(ptIndex.begin(), ptIndex.end(), [](int i){ cout << i << endl;});
+    // [dim, data](int& i) {return data[i][dim] < data[i][dim]; };
+
 
     // cout << stoi(" 100") << endl;
     // vector<int> vec;
