@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <stack>
+#include "dataFrame.hpp"
 
 template <class T1, class T2>
 double Pearson(std::vector<T1>& _in1, std::vector<T2>& _in2)
@@ -65,7 +66,7 @@ float calcDistance(std::vector<T> data1, std::vector<T> data2)
 }
 
 template <class T>
-std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts, float(*func)(std::vector<T>, std::vector<T>)=calcDistance)
+std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts, float(*func)(std::vector<T>, std::vector<T>) = calcDistance)
 {
 	// 以下实现为brute算法时间效率k*n**2 (如果传入的不是可以直接用欧式距离衡量的统一进行brute算法)
 
@@ -155,6 +156,78 @@ std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts
 	}
 	return clusters;
 }
+struct KdNode {
+	// 构建kdtree的node节点
+	int id;
+	int splitDim;
+	KdNode* left=nullptr;
+	KdNode* right=nullptr;
+};
+class KdTree
+{
+public:
+	// 根节点
+	KdNode* root;
+
+	// 保存输入数据
+	std::vector<std::vector<double>> data;
+
+	// 初始化的数据索引
+	std::vector<int> index;
+
+	// 返回预测数据的标签即接近数据的索引
+	int label;
+
+	// 数据行数
+	int n_samples;
+
+	// 数据特征数
+	int n_features;
+
+	KdTree();
+
+	// 建树
+	KdNode* buildTree(std::vector<int>& ptIndex);
+
+	// 找到k个最近邻
+	void findKNearnests(const std::vector<double>& perdictData);
+
+	// 找到分裂的维度
+	int findSplitDim(const std::vector<int>& ptIndex);
+
+	~KdTree();
+
+private:
+
+};
+
+KdTree::KdTree()
+{
+}
+
+inline KdNode* KdTree::buildTree(std::vector<int>& ptIndex)
+{
+	if (ptIndex.empty()) return nullptr;
+	int dim = this->findSplitDim(ptIndex);
+	std::nth_element(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2, ptIndex.end(), [dim, this](int& i) {return data[i][dim] < data[i][dim]; });
+	std::vector<int> left(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2);
+	std::vector<int> right(ptIndex.begin() + 1 + (ptIndex.size() / 2), ptIndex.end());
+	KdNode* node{};
+	node->id = *(ptIndex.begin() + ptIndex.size() / 2);
+	node->splitDim = dim;
+	node->left = this->buildTree(left);
+	node->right = this->buildTree(right);
+	return node;
+}
+
+inline int KdTree::findSplitDim(const std::vector<int>& ptIndex)
+{
+	return 0;
+}
+
+KdTree::~KdTree()
+{
+}
 void knn() {
 
 }
@@ -190,9 +263,20 @@ void testPearson()
 	std::cout << Pearson(vec1, vec2) << std::endl;
 	std::cout << Spearman(vec1, vec2) << std::endl;
 }
+void testDataDbscan() {
+	DataFrame df{};
+	df.read_csv(R"(./data.csv)");
+	std::cout << "列: " << df.column_length << " " << "行: " << df.row_length << std::endl;
+	auto res = df.values<double>();
+	std::cout.precision(16);
+	std::cout << res[0][0] << std::endl;
+	auto cluster = DBscan(res, 5, 3);
+	for (int i = 0; i < cluster.size(); ++i) {
+		std::cout << cluster[i] << std::endl;
+	}
+}
 int main()
 {
-	testPearson();
-	testDBscan();
+	testDataDbscan();
 	return 0;
 }
