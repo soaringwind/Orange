@@ -9,7 +9,7 @@
 #include "dataFrame.cpp"
 
 template <class T1, class T2>
-double Pearson(std::vector<T1>& _in1, std::vector<T2>& _in2)
+double Pearson(std::vector<T1> &_in1, std::vector<T2> &_in2)
 {
 	if (_in1.size() != _in2.size())
 	{
@@ -27,7 +27,7 @@ double Pearson(std::vector<T1>& _in1, std::vector<T2>& _in2)
 }
 
 template <class T1, class T2>
-double Spearman(std::vector<T1>& _in1, std::vector<T2>& _in2)
+double Spearman(std::vector<T1> &_in1, std::vector<T2> &_in2)
 {
 	if (_in1.size() != _in2.size())
 	{
@@ -35,7 +35,7 @@ double Spearman(std::vector<T1>& _in1, std::vector<T2>& _in2)
 		return 0.f;
 	}
 	size_t n = _in1.size();
-	double spearman{ 0 };
+	double spearman{0};
 	std::vector<int> _in1Index;
 	std::vector<int> _in2Index;
 	for (int i = 0; i < n; i++)
@@ -44,9 +44,9 @@ double Spearman(std::vector<T1>& _in1, std::vector<T2>& _in2)
 		_in2Index.emplace_back(i);
 	}
 	std::sort(_in1Index.begin(), _in1Index.end(), [_in1, _in1Index](int a, int b)
-		{ return _in1[_in1Index[a]] < _in1[_in1Index[b]]; });
+			  { return _in1[_in1Index[a]] < _in1[_in1Index[b]]; });
 	std::sort(_in2Index.begin(), _in2Index.end(), [_in2, _in2Index](int a, int b)
-		{ return _in2[_in2Index[a]] < _in2[_in2Index[b]]; });
+			  { return _in2[_in2Index[a]] < _in2[_in2Index[b]]; });
 	for (int i = 0; i < n; i++)
 	{
 		spearman += pow((_in1Index[i] - _in2Index[i]), 2);
@@ -66,7 +66,7 @@ float calcDistance(std::vector<T> data1, std::vector<T> data2)
 }
 
 template <class T>
-std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts, float(*func)(std::vector<T>, std::vector<T>) = calcDistance)
+std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts, float (*func)(std::vector<T>, std::vector<T>) = calcDistance)
 {
 	// 以下实现为brute算法时间效率k*n**2 (如果传入的不是可以直接用欧式距离衡量的统一进行brute算法)
 
@@ -156,18 +156,19 @@ std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts
 	}
 	return clusters;
 }
-struct KdNode {
+struct KdNode
+{
 	// 构建kdtree的node节点
 	int id;
 	int splitDim;
-	KdNode* left=nullptr;
-	KdNode* right=nullptr;
+	KdNode *left = nullptr;
+	KdNode *right = nullptr;
 };
 class KdTree
 {
 public:
 	// 根节点
-	KdNode* root;
+	KdNode *root;
 
 	// 保存输入数据
 	std::vector<std::vector<double>> data;
@@ -187,32 +188,33 @@ public:
 	KdTree();
 
 	// 建树
-	KdNode* buildTree(std::vector<int>& ptIndex);
+	KdNode *buildTree(std::vector<int> &ptIndex);
 
 	// 找到k个最近邻
-	void findKNearnests(const std::vector<double>& perdictData);
+	void findKNearnests(const std::vector<double> &perdictData);
 
 	// 找到分裂的维度
-	int findSplitDim(const std::vector<int>& ptIndex);
+	int findSplitDim(const std::vector<int> &ptIndex);
 
 	~KdTree();
 
 private:
-
 };
 
 KdTree::KdTree()
 {
 }
 
-inline KdNode* KdTree::buildTree(std::vector<int>& ptIndex)
+inline KdNode *KdTree::buildTree(std::vector<int> &ptIndex)
 {
-	if (ptIndex.empty()) return nullptr;
+	if (ptIndex.empty())
+		return nullptr;
 	int dim = this->findSplitDim(ptIndex);
-	std::nth_element(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2, ptIndex.end(), [dim, this](int& i, int& j) {return data[i][dim] < data[j][dim]; });
+	std::nth_element(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2, ptIndex.end(), [dim, this](int &i, int &j)
+					 { return data[i][dim] < data[j][dim]; });
 	std::vector<int> left(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2);
 	std::vector<int> right(ptIndex.begin() + 1 + (ptIndex.size() / 2), ptIndex.end());
-	KdNode* node{};
+	KdNode *node{};
 	node->id = *(ptIndex.begin() + ptIndex.size() / 2);
 	node->splitDim = dim;
 	node->left = this->buildTree(left);
@@ -220,16 +222,46 @@ inline KdNode* KdTree::buildTree(std::vector<int>& ptIndex)
 	return node;
 }
 
-inline int KdTree::findSplitDim(const std::vector<int>& ptIndex)
+inline int KdTree::findSplitDim(const std::vector<int> &ptIndex)
 {
-	return 0;
+	int dim = 0;
+	double difference = 0;
+	for (int i = 0; i < this->n_features; ++i)
+	{
+		double min_val = this->data[ptIndex[0]][i];
+		double max_val = this->data[ptIndex[0]][i];
+		for (int j = 0; j < ptIndex.size(); ++j)
+		{
+			if (this->data[ptIndex[j]][i] <= min_val) {
+				min_val = this->data[ptIndex[j]][i];
+			}
+			if (this->data[ptIndex[j]][i] >= max_val) {
+				max_val = this->data[ptIndex[j]][i];
+			}
+		}
+		if ((max_val - min_val) >= difference) {
+			dim = i;
+			difference = max_val - min_val;
+		}
+	}
+	return dim;
 }
-
+void KdTree::findKNearnests(const std::vector<double> &perdictData) {
+	KdNode* currentNode = this->root;
+	while (currentNode->left!=nullptr && currentNode->right!=nullptr) {
+		if (currentNode->right==nullptr || perdictData[currentNode->splitDim] < this->data[currentNode->id][currentNode->splitDim]) {
+			currentNode = currentNode->left;
+		}
+		else {
+			currentNode = currentNode->right;
+		}
+	}
+}
 KdTree::~KdTree()
 {
 }
-void knn() {
-
+void knn()
+{
 }
 void testDBscan()
 {
@@ -263,15 +295,18 @@ void testPearson()
 	std::cout << Pearson(vec1, vec2) << std::endl;
 	std::cout << Spearman(vec1, vec2) << std::endl;
 }
-void testDataDbscan() {
+void testDataDbscan()
+{
 	DataFrame df{};
 	df.read_csv(R"(./data.csv)");
-	std::cout << "列: " << df.column_length << " " << "行: " << df.row_length << std::endl;
+	std::cout << "列: " << df.column_length << " "
+			  << "行: " << df.row_length << std::endl;
 	auto res = df.values<double>();
 	std::cout.precision(16);
 	std::cout << res[0][0] << std::endl;
 	auto cluster = DBscan(res, 5, 3);
-	for (int i = 0; i < cluster.size(); ++i) {
+	for (int i = 0; i < cluster.size(); ++i)
+	{
 		std::cout << cluster[i] << std::endl;
 	}
 }

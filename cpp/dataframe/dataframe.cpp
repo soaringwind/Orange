@@ -9,6 +9,7 @@
 #include <iostream>
 #include <type_traits>
 #include <fstream>
+#include <sstream>
 
 enum ObjectId
 {
@@ -192,7 +193,12 @@ std::string Cell::to_string()
 	case floatId:
 		return std::to_string(*(float*)this->value);
 	case doubleId:
-		return std::to_string(*(double*)this->value);
+	{
+		std::stringstream ss;
+		ss.precision(16);
+		ss >> *(double*)this->value;
+		return ss.str();
+	}
 	case longId:
 		return std::to_string(*(long*)this->value);
 	case stringId:
