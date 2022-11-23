@@ -1,4 +1,4 @@
-// #pragma once
+#pragma once
 #include <vector>
 #include <numeric>
 #include <iostream>
@@ -6,14 +6,16 @@
 #include <algorithm>
 #include <unordered_map>
 #include <stack>
-#include "dataFrame.cpp"
+#include <set>
+#include <queue>
+#include "dataFrame.hpp"
 
 template <class T1, class T2>
-double Pearson(std::vector<T1> &_in1, std::vector<T2> &_in2)
+double Pearson(std::vector<T1>& _in1, std::vector<T2>& _in2)
 {
 	if (_in1.size() != _in2.size())
 	{
-		std::cout << "³ß´ç²»Æ¥Åä" << std::endl;
+		std::cout << "å°ºå¯¸ä¸åŒ¹é…" << std::endl;
 		return 0.f;
 	}
 	size_t n = _in1.size();
@@ -27,15 +29,15 @@ double Pearson(std::vector<T1> &_in1, std::vector<T2> &_in2)
 }
 
 template <class T1, class T2>
-double Spearman(std::vector<T1> &_in1, std::vector<T2> &_in2)
+double Spearman(std::vector<T1>& _in1, std::vector<T2>& _in2)
 {
 	if (_in1.size() != _in2.size())
 	{
-		std::cout << "³ß´ç²»Æ¥Åä" << std::endl;
+		std::cout << "å°ºå¯¸ä¸åŒ¹é…" << std::endl;
 		return 0.f;
 	}
 	size_t n = _in1.size();
-	double spearman{0};
+	double spearman{ 0 };
 	std::vector<int> _in1Index;
 	std::vector<int> _in2Index;
 	for (int i = 0; i < n; i++)
@@ -44,9 +46,9 @@ double Spearman(std::vector<T1> &_in1, std::vector<T2> &_in2)
 		_in2Index.emplace_back(i);
 	}
 	std::sort(_in1Index.begin(), _in1Index.end(), [_in1, _in1Index](int a, int b)
-			  { return _in1[_in1Index[a]] < _in1[_in1Index[b]]; });
+		{ return _in1[_in1Index[a]] < _in1[_in1Index[b]]; });
 	std::sort(_in2Index.begin(), _in2Index.end(), [_in2, _in2Index](int a, int b)
-			  { return _in2[_in2Index[a]] < _in2[_in2Index[b]]; });
+		{ return _in2[_in2Index[a]] < _in2[_in2Index[b]]; });
 	for (int i = 0; i < n; i++)
 	{
 		spearman += pow((_in1Index[i] - _in2Index[i]), 2);
@@ -66,29 +68,29 @@ float calcDistance(std::vector<T> data1, std::vector<T> data2)
 }
 
 template <class T>
-std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts, float (*func)(std::vector<T>, std::vector<T>) = calcDistance)
+std::vector<int> DBscan(std::vector<std::vector<T>>& data, float eps, int minPts, float (*func)(std::vector<T>, std::vector<T>) = calcDistance)
 {
-	// ÒÔÏÂÊµÏÖÎªbruteËã·¨Ê±¼äĞ§ÂÊk*n**2 (Èç¹û´«ÈëµÄ²»ÊÇ¿ÉÒÔÖ±½ÓÓÃÅ·Ê½¾àÀëºâÁ¿µÄÍ³Ò»½øĞĞbruteËã·¨)
+	// ä»¥ä¸‹å®ç°ä¸ºbruteç®—æ³•æ—¶é—´æ•ˆç‡k*n**2 (å¦‚æœä¼ å…¥çš„ä¸æ˜¯å¯ä»¥ç›´æ¥ç”¨æ¬§å¼è·ç¦»è¡¡é‡çš„ç»Ÿä¸€è¿›è¡Œbruteç®—æ³•)
 
-	// Êı¾İµÄÊıÁ¿
+	// æ•°æ®çš„æ•°é‡
 	int n = data.size();
 
-	// ·µ»ØµÄ·ÖÀà½á¹û
+	// è¿”å›çš„åˆ†ç±»ç»“æœ
 	std::vector<int> clusters = std::vector<int>(n, -1);
 
-	// ÊÇ·ñÒÑ¾­±»·ÃÎÊ
+	// æ˜¯å¦å·²ç»è¢«è®¿é—®
 	std::vector<bool> visited = std::vector<bool>(n);
 
-	// Ã¿¸öµãµÄÀàĞÍ (1: noise, 2: border, 3: Core)
+	// æ¯ä¸ªç‚¹çš„ç±»å‹ (1: noise, 2: border, 3: Core)
 	std::vector<int> pointType = std::vector<int>(n);
 
-	// ºËĞÄµãµÄË÷Òı
+	// æ ¸å¿ƒç‚¹çš„ç´¢å¼•
 	std::vector<int> corePoint = std::vector<int>();
 
-	// Ã¿¸öÊı¾İÓë±ğµÄÊı¾İµÄ¾àÀë
+	// æ¯ä¸ªæ•°æ®ä¸åˆ«çš„æ•°æ®çš„è·ç¦»
 	std::unordered_map<int, std::vector<float>> distanceMap = std::unordered_map<int, std::vector<float>>();
 
-	// È·¶¨ºËĞÄµã²¢¼ÆËãÃ¿¸öµãÏà»¥Ö®¼äµÄ¾àÀë, ¸´ÔÓ¶ÈÊµ¼ÊÉÏÊÇk*n**2, ¿Õ¼ä»»Ê±¼ä
+	// ç¡®å®šæ ¸å¿ƒç‚¹å¹¶è®¡ç®—æ¯ä¸ªç‚¹ç›¸äº’ä¹‹é—´çš„è·ç¦», å¤æ‚åº¦å®é™…ä¸Šæ˜¯k*n**2, ç©ºé—´æ¢æ—¶é—´
 	for (int i = 0; i < n; ++i)
 	{
 		int num = 0;
@@ -114,11 +116,11 @@ std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts
 		}
 	}
 
-	// ´òÂÒË÷Òı
+	// æ‰“ä¹±ç´¢å¼•
 	srand(n);
 	std::random_shuffle(corePoint.begin(), corePoint.end());
 
-	// ºËĞÄµãÀ©Õ¹
+	// æ ¸å¿ƒç‚¹æ‰©å±•
 	std::stack<int> ps;
 	int core;
 	int clusterNum = -1;
@@ -136,7 +138,7 @@ std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts
 			ps.pop();
 			visited[core] = true;
 			auto coreDis = distanceMap[core];
-			// ËÑË÷¾àÀëºËĞÄµãÂú×ãÌõ¼şµÄµãÊı
+			// æœç´¢è·ç¦»æ ¸å¿ƒç‚¹æ»¡è¶³æ¡ä»¶çš„ç‚¹æ•°
 			for (int j = 0; j < coreDis.size(); ++j)
 			{
 				if (visited[j] || coreDis[j] > eps)
@@ -158,71 +160,82 @@ std::vector<int> DBscan(std::vector<std::vector<T>> &data, float eps, int minPts
 }
 struct KdNode
 {
-	// ¹¹½¨kdtreeµÄnode½Úµã
-	int id;
-	int splitDim;
-	KdNode *left = nullptr;
-	KdNode *right = nullptr;
+	// æ„å»ºkdtreeçš„nodeèŠ‚ç‚¹
+	int id=0;
+	int splitDim=0;
+	KdNode* left = nullptr;
+	KdNode* right = nullptr;
 };
 class KdTree
 {
 public:
-	// ¸ù½Úµã
-	KdNode *root;
+	// æ ¹èŠ‚ç‚¹
+	KdNode* root{};
 
-	// ±£´æÊäÈëÊı¾İ
-	std::vector<std::vector<double>> data;
+	// ä¿å­˜è¾“å…¥æ•°æ®
+	std::vector<std::vector<double>> data{};
 
-	// ³õÊ¼»¯µÄÊı¾İË÷Òı
-	std::vector<int> index;
+	// åˆå§‹åŒ–çš„æ•°æ®ç´¢å¼•
+	std::vector<int> index{};
 
-	// ·µ»ØÔ¤²âÊı¾İµÄ±êÇ©¼´½Ó½üÊı¾İµÄË÷Òı
-	int label;
+	// è¿”å›é¢„æµ‹æ•°æ®çš„æ ‡ç­¾å³æ¥è¿‘æ•°æ®çš„ç´¢å¼•
+	std::vector<int> label{};
 
-	// Êı¾İĞĞÊı
-	int n_samples;
+	// æ•°æ®è¡Œæ•°
+	int n_samples{};
 
-	// Êı¾İÌØÕ÷Êı
-	int n_features;
+	// æ•°æ®ç‰¹å¾æ•°
+	int n_features{};
 
-	KdTree();
+	KdTree(std::vector<std::vector<double>>& data);
 
-	// ½¨Ê÷
-	KdNode *buildTree(std::vector<int> &ptIndex);
+	// å»ºæ ‘
+	KdNode* buildTree(std::vector<int>& ptIndex, int depth=0);
 
-	// ÕÒµ½k¸ö×î½üÁÚ
-	void findKNearnests(const std::vector<double> &perdictData);
+	// æ‰¾åˆ°kä¸ªæœ€è¿‘é‚»
+	void findKNearnests(const std::vector<double>& perdictData, int& k);
 
-	// ÕÒµ½·ÖÁÑµÄÎ¬¶È
-	int findSplitDim(const std::vector<int> &ptIndex);
+	// æ‰¾åˆ°åˆ†è£‚çš„ç»´åº¦
+	int findSplitDim(const std::vector<int>& ptIndex);
+
+	// æŸ¥çœ‹æ•´é¢—æ ‘ç»“æ„
+	void printTree();
 
 	~KdTree();
 
 private:
 };
 
-KdTree::KdTree()
+KdTree::KdTree(std::vector<std::vector<double>>& data)
 {
+	this->data = data;
+	this->n_samples = this->data.size();
+	this->n_features = this->data[0].size();
+	for (int i = 0; i < n_samples; ++i) {
+		this->index.emplace_back(i);
+	}
+	this->root = this->buildTree(this->index);
 }
 
-inline KdNode *KdTree::buildTree(std::vector<int> &ptIndex)
+inline KdNode* KdTree::buildTree(std::vector<int>& ptIndex, int depth)
 {
 	if (ptIndex.empty())
 		return nullptr;
-	int dim = this->findSplitDim(ptIndex);
-	std::nth_element(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2, ptIndex.end(), [dim, this](int &i, int &j)
-					 { return data[i][dim] < data[j][dim]; });
+	//int dim = this->findSplitDim(ptIndex);
+	int dim = depth % n_features;
+	std::nth_element(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2, ptIndex.end(), [dim, this](int& i, int& j)
+		{ return data[i][dim] < data[j][dim]; });
 	std::vector<int> left(ptIndex.begin(), ptIndex.begin() + ptIndex.size() / 2);
 	std::vector<int> right(ptIndex.begin() + 1 + (ptIndex.size() / 2), ptIndex.end());
-	KdNode *node{};
+	KdNode* node = new KdNode{};
 	node->id = *(ptIndex.begin() + ptIndex.size() / 2);
 	node->splitDim = dim;
-	node->left = this->buildTree(left);
-	node->right = this->buildTree(right);
+	node->left = this->buildTree(left, depth+1);
+	node->right = this->buildTree(right, depth+1);
 	return node;
 }
 
-inline int KdTree::findSplitDim(const std::vector<int> &ptIndex)
+inline int KdTree::findSplitDim(const std::vector<int>& ptIndex)
 {
 	int dim = 0;
 	double difference = 0;
@@ -246,15 +259,87 @@ inline int KdTree::findSplitDim(const std::vector<int> &ptIndex)
 	}
 	return dim;
 }
-void KdTree::findKNearnests(const std::vector<double> &perdictData) {
+void KdTree::findKNearnests(const std::vector<double>& perdictData, int& k) {
+	// è‡ªå®šä¹‰æ¯”è¾ƒå…ƒç´ 
+	struct neighbour_heap_cmp 
+	{
+		bool operator()(std::tuple<int, double>& i, std::tuple<int, double>& j) {
+			return std::get<1>(i) < std::get<1>(j);
+		}
+	};
+	using neighbour = std::tuple<int, double> ;
 	KdNode* currentNode = this->root;
-	while (currentNode->left!=nullptr && currentNode->right!=nullptr) {
-		if (currentNode->right==nullptr || perdictData[currentNode->splitDim] < this->data[currentNode->id][currentNode->splitDim]) {
+	std::set<KdNode*> visited;
+
+	// å¤§é¡¶å †å­˜æ”¾åŸå§‹æ•°æ®ç´¢å¼•åŠå…¶ä¸é¢„æµ‹ç‚¹çš„è·ç¦»
+	std::priority_queue<neighbour, std::vector<neighbour>, neighbour_heap_cmp> neighbour_heap;
+	std::stack<KdNode*> searchPath;
+	searchPath.push(currentNode);
+	while (currentNode->left != nullptr && currentNode->right != nullptr) {
+		if (currentNode->right == nullptr || perdictData[currentNode->splitDim] < this->data[currentNode->id][currentNode->splitDim]) {
 			currentNode = currentNode->left;
+			std::cout << currentNode->id << std::endl;
 		}
 		else {
 			currentNode = currentNode->right;
+			std::cout << currentNode->id << std::endl;
 		}
+		searchPath.push(currentNode);
+	}
+	
+	// æœç´¢è·¯å¾„ä¸ä¸ºç©ºåˆ™ä¸€ç›´æŸ¥æ‰¾
+	while (!searchPath.empty()) {
+		currentNode = searchPath.top();
+		searchPath.pop();
+		if (currentNode == nullptr || visited.find(currentNode) != visited.end()) {
+			continue;
+		}
+		visited.insert(currentNode);
+		if (neighbour_heap.size() < k) {
+			neighbour_heap.emplace(std::tuple<int, double>(currentNode->id, double(calcDistance(this->data[currentNode->id], perdictData))));
+			searchPath.push(currentNode->left);
+			searchPath.push(currentNode->right);
+		}
+		else {
+			double p = std::get<1>(neighbour_heap.top());
+			if (p > calcDistance(this->data[currentNode->id], perdictData)) {
+				neighbour_heap.pop();
+				neighbour_heap.emplace(std::tuple<int, double>(currentNode->id, double(calcDistance(this->data[currentNode->id], perdictData))));
+			}
+			p = std::get<1>(neighbour_heap.top());
+			int dim = currentNode->splitDim;
+			if ((perdictData[dim] - p) < this->data[currentNode->id][dim]) {
+				searchPath.push(currentNode->left);
+			}
+			if ((perdictData[dim] + p) > this->data[currentNode->id][dim]) {
+				searchPath.push(currentNode->right);
+			}
+		}
+	}
+	for (int i = 0; i < k; i++) {
+		this->label.emplace_back(std::get<0>(neighbour_heap.top()));
+		neighbour_heap.pop();
+	}
+	return;
+}
+inline void KdTree::printTree()
+{
+	std::queue<KdNode*> tem;
+	tem.push(this->root);
+	while (!tem.empty()) {
+		int n = tem.size();
+		for (int i = 0; i < n; ++i) {
+			auto node = tem.front();
+			std::cout << "(" << node->splitDim << ", " << node->id << ")" << " ";
+			tem.pop();
+			if (node->left) {
+				tem.emplace(node->left);
+			}
+			if (node->right) {
+				tem.emplace(node->right);
+			}
+		}
+		std::cout << "\n";
 	}
 }
 KdTree::~KdTree()
@@ -299,8 +384,8 @@ void testDataDbscan()
 {
 	DataFrame df{};
 	df.read_csv(R"(./data.csv)");
-	std::cout << "ÁĞ: " << df.column_length << " "
-			  << "ĞĞ: " << df.row_length << std::endl;
+	std::cout << "åˆ—: " << df.column_length << " "
+		<< "è¡Œ: " << df.row_length << std::endl;
 	auto res = df.values<double>();
 	std::cout.precision(16);
 	std::cout << res[0][0] << std::endl;
@@ -310,8 +395,25 @@ void testDataDbscan()
 		std::cout << cluster[i] << std::endl;
 	}
 }
+void testKnn() {
+	DataFrame df{};
+	df.read_csv(R"(./data.csv)");
+	std::cout << "åˆ—: " << df.column_length << " "
+		<< "è¡Œ: " << df.row_length << std::endl;
+	auto res = df.values<double>();
+	auto knn = KdTree(res);
+	std::vector<double> perdict;
+	perdict.emplace_back(7.723325119394918);
+	perdict.emplace_back(0.7898756767401094);
+	int k = 3;
+	knn.findKNearnests(perdict, k);
+	for (int i = 0; i < knn.label.size(); i++) {
+		std::cout << knn.label[i] << std::endl;
+	}
+	knn.printTree();
+}
 int main()
 {
-	testDataDbscan();
+	testKnn();
 	return 0;
 }
