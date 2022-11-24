@@ -72,13 +72,14 @@ for (auto it=set.begin(); it!=set.end(); it++) {
 
 #### queue
 c++中的队列，priority_queue为大顶堆，也就是大的数放在了前面，如果想要小顶堆则需要重载比较方法。
-```
+
+```c++
 #include <queue>
 
 // 初始化
 priority_queue<T> q;
 priority_queue<T, vector<T>, cmp> q;
-```c++
+```
 
 
 ## 小技巧
