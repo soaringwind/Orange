@@ -47,6 +47,40 @@ vector容器是c++中可变长的数组，一般情况下使用vector较多，�
 #### 6. deque
 deque是双端链表，因此其头插和尾插的效率很高，头删和尾删的效率也很高，但查找效率很低。
 
+#### 7. set
+set实际上是一个集合，里面储存的元素必须不同，且初学者尽量不要尝试修改里面的值。且内部是做了排序。如果想要存放自定义的数据结构，则必须要重载()运算符。
+```c++
+#include <set>
+
+// 创建set集合
+std::set<T, cmp> set;
+
+// 增
+set.insert(T);
+
+// 查
+set.find(T);
+
+// 删
+set.erase(T);
+
+// 遍历
+for (auto it=set.begin(); it!=set.end(); it++) {
+   cout << *it << endl;
+}
+```
+
+#### queue
+c++中的队列，priority_queue为大顶堆，也就是大的数放在了前面，如果想要小顶堆则需要重载比较方法。
+```
+#include <queue>
+
+// 初始化
+priority_queue<T> q;
+priority_queue<T, vector<T>, cmp> q;
+```c++
+
+
 ## 小技巧
 
 1. 如何将不同的数据放入到容器中。
