@@ -8,7 +8,7 @@
 #include <stack>
 #include <set>
 #include <queue>
-#include "dataFrame.hpp"
+#include "dataFrame.cpp"
 
 template <class T1, class T2>
 double Pearson(std::vector<T1>& _in1, std::vector<T2>& _in2)
