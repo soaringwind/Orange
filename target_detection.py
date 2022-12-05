@@ -1,3 +1,6 @@
+# https://zhuanlan.zhihu.com/p/119998277
+# https://blog.csdn.net/zjn295771349/article/details/122087166
+# https://blog.csdn.net/Cai_Xu_Kun/article/details/115738561
 import numpy as np 
 import torch 
 import torch.nn as nn 
