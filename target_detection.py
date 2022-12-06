@@ -324,3 +324,103 @@ for i in range(len(box)):
     rect = plt.Rectangle((x1, y1), width, height, fill=False, color='white')
     ax.add_patch(rect)
 plt.show()
+class MyDataset(Dataset):
+    def __init__(self, data, label, transform=None) -> None:
+        super().__init__()
+        self.data =  data 
+        self.label = label 
+        self.transform = transform
+    
+    def __getitem__(self, index):
+        if torch.is_tensor(index):
+            index = index.tolist()
+        img = self.data[index]
+        label = self.label[index]
+        if self.transform:
+            img = self.transform(img)
+        if len(label) < 20:
+            for _ in range(20-len(label)):
+                label.append([0, 0, 0, 0, 0])
+        label = np.array(label)
+        return {"data": img, "label": label}
+
+    def __len__(self):
+        return len(self.data)
+import imageio 
+import imgaug as ia 
+data_transform = torchvision.transforms.Compose([torchvision.transforms.ToPILImage(), torchvision.transforms.Resize((416,416)), torchvision.transforms.ToTensor()])
+img = np.array(imageio.imread("/home/tao_wei/remote/target_detection/zbra.jpg"))
+# 假设x,y,w,h
+dataset = MyDataset([img, img], [[[0, 0, 116,90, 22]], [[0, 0, 116,90, 22],[0, 0, 62,45, 22]]], data_transform)
+dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
+anchors = [116,90, 156,198, 373,326, 30,61, 62,45, 59,119, 10,13, 16,30, 33,23]
+class Train(object):
+    def __init__(self, model, dataloader, optimizer) -> None:
+        self.model = model 
+        self.model.train()
+        self.dataloader= dataloader
+        self.optimizer = optimizer
+        # x,y,w,h损失
+        self.MSE = nn.MSELoss()
+        # obj损失
+        self.CE = nn.CrossEntropyLoss()
+        # class损失
+        self.BCE = nn.BCEWithLogitsLoss()
+    
+    def train(self):
+        running_loss = 0 
+        for i, data in enumerate(self.dataloader, 0):
+            img_data = data["data"]
+            img_label = data["label"]
+            print(img_label.shape)
+            y_hat = self.model(img_data)
+            y_true = self.preprocess_true_boxes(img_label)
+            self.compute_loss(y_hat, y_true)
+        print(running_loss)
+
+
+    def compute_loss(self, y_hat, y_true):
+        print(len(y_hat), len(y_true))
+        return 
+    def preprocess_true_boxes(self, true_boxes, input_shape=(416, 416), anchors=anchors, num_classes=80):
+        anchors_dev = []
+        for i in range(3):
+            anchors_dev.append([anchors[6*i], anchors[6*i+1]])
+            anchors_dev.append([anchors[6*i+2], anchors[6*i+3]])
+            anchors_dev.append([anchors[6*i+4], anchors[6*i+5]])
+        anchors_dev = np.array(anchors_dev)
+        num_layers = 3
+        input_shape = np.array(input_shape, dtype='int32')
+        true_boxes = np.array(true_boxes, dtype='float32')
+        boxes_xy = true_boxes[..., 0:2].copy()
+        boxes_wh = true_boxes[..., 2:4].copy()
+        boxes_xy += boxes_wh // 2
+        boxes_xy /= input_shape[0]
+        true_boxes[..., 0:4] = true_boxes[..., 0:4]/input_shape[0] 
+        m = true_boxes.shape[0]
+        grid_shapes = [input_shape//{0:32, 1:16, 2:8}[l] for l in range(num_layers)]
+        y_true = [np.zeros((m, grid_shapes[l][0], grid_shapes[l][1], num_layers, 5+num_classes), dtype='float32') for l in range(num_layers)]
+        valid_mask = boxes_wh[..., 0] > 0
+        for b in range(m):
+            per_img_true_boxes = boxes_wh[b, valid_mask[b]]
+            if len(per_img_true_boxes) == 0:
+                continue 
+            for k in range(per_img_true_boxes.shape[0]):
+                boxes_1 = np.zeros(shape=(1, 4))
+                boxes_1[:, 2:4] = per_img_true_boxes[k, :]
+                boxes_2 = np.zeros(shape=(anchors_dev.shape[0], 4))
+                boxes_2[:, 2:4] = anchors_dev[:, :]
+                boxes_1 = torch.from_numpy(boxes_1)         
+                boxes_2 = torch.from_numpy(boxes_2)
+                iou = bbox_iou(boxes_1, boxes_2)
+                iou = iou.detach().numpy()
+                best_anchor = np.argmax(iou, axis=-1)
+                print(iou)
+                print(best_anchor)
+                cell_x = np.floor(boxes_xy[b, k, 0]*grid_shapes[best_anchor//6]).astype('int32')
+                cell_y = np.floor(boxes_xy[b, k, 1]*grid_shapes[best_anchor//6]).astype('int32')
+                obj = int(true_boxes[b, k, 4])
+                y_true[best_anchor//6][b, cell_y, cell_x, best_anchor%6//2, 0:4] = true_boxes[b, k, 0:4]
+                y_true[best_anchor//6][b, cell_y, cell_x, best_anchor%6//2, 4] = 1
+                y_true[best_anchor//6][b, cell_y, cell_x, best_anchor%6//2, 5+obj] = 1
+        return y_true
