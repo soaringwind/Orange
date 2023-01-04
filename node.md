@@ -1,3 +1,55 @@
+## vscode配置remote访问远程服务器问题
+1. 本地最好使用git的ssh程序。
+2. 本地需要生成id_rsa私钥和公钥。
+3. 需要注意远程服务器中.ssh文件及文件中的权限有固定要求不可随便更改。
+
+## linux安装nodejs
+在官网下载之后还需要进行软连接的配置，需要把解压出来的文件夹下的bin文件路径配置到/usr/local/bin/npm等里面去，否则无法在别的地方使用。
+
+## nodejs安装vue
+使用npm install -g @vue/cli命令安装之后，同样需要配置软连接，否则无法在其他地方使用。
+
+## vue创建项目
+1. 采取手动创建，选择多个特性，router，vuex，css等。其余可随意选择，等待创建即可。
+2. 进入文件夹，输入vue add element-plus命令。
+3. 输入npm install axios安装axios插件。
+4. 在项目中引入axios并配置http。
+
+## 解决System limit for number of file watchers reached
+sysctl fs.inotify.max_user_watches=524288 
+sysctl -p
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 百度地图添加自定义的html标签内容
 使用的是control方法，需要先设置好control，之后把html的内容全部放到里面，最后在map中加入进去。
         function SelectControl(){
