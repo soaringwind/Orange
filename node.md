@@ -10,10 +10,11 @@
 使用npm install -g @vue/cli命令安装之后，同样需要配置软连接，否则无法在其他地方使用。
 
 ## vue创建项目
-1. 采取手动创建，选择多个特性，router，vuex，css等。其余可随意选择，等待创建即可。
-2. 进入文件夹，输入vue add element-plus命令。
-3. 输入npm install axios安装axios插件。
-4. 在项目中引入axios并配置http。
+1. 输入vue create test创建一个新的vue项目。
+2. 采取手动创建，选择多个特性，router，vuex，css等。其余可随意选择，等待创建即可。
+3. 进入文件夹，输入vue add element-plus命令。
+4. 输入npm install axios安装axios插件。
+5. 在项目中引入axios并配置http。
 
 ### 配置axios的http转发
 前后端的交互就是通过请求来发起，因此需要对其进行axios的配置，主要是需要配置基础路由和请求配置，响应配置等等。这个的配置也很简单，就是在http的index.js中配置即可。
