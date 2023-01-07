@@ -17,6 +17,7 @@
 
 ### 配置axios的http转发
 前后端的交互就是通过请求来发起，因此需要对其进行axios的配置，主要是需要配置基础路由和请求配置，响应配置等等。这个的配置也很简单，就是在http的index.js中配置即可。
+
 ```js
 import axios from 'axios'
 
