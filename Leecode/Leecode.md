@@ -158,7 +158,11 @@ end_index % n，超过则会自动相减。
 
    意义：当列表有新的元素插入时，有两种插入方法，第一，找到不大于这个元素的第一个索引，向前插入；第二，找到不小于这个元素的最后一个索引，向后插入。（倒序插入）
    
-   leetcode 417题：[太平洋大西洋水流问题](https://leetcode-cn.com/problems/pacific-atlantic-water-flow/description/)
+   leetcode 417题：[太平洋大西洋水流问题](https://leetcode-cn.com/problems/pacific-atlantic-water-flow/description/) 
+   
+   leetcode 1154题：
+   
+   该问题的关键在于计算某个结点的左子树数量及右子树数量。（递归求解）
    
    
 
