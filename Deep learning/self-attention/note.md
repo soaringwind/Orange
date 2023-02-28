@@ -256,7 +256,9 @@ CBAM的思想和前面的SeNet网络其实是很相似的，它提出一种简�
 
    激活函数（CBAM中使用的是什么激活函数）：sigmoid，relu，leaky relu，tanh，elu，prelu，softmax，swish，softplus。CBAM中卷积使用的是leaky relu，而全连接神经网络当然是sigmoid。
 
-   人脸检测的一些框架：MTCNN，face R-CNN，SSH
+   人脸检测的一些框架：MTCNN，face R-CNN，SSH。
+   
+   yolo中nms流程：
    ```
 
 ![image](https://user-images.githubusercontent.com/26198992/183623026-c6682bcd-23f5-4539-b41b-06031f255794.png)
