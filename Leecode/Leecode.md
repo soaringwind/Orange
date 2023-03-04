@@ -157,13 +157,13 @@ end_index % n，超过则会自动相减。
    leetcode 34题：[在排序数组中查找元素的第一个和最后一个位置](https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/description/)
 
    意义：当列表有新的元素插入时，有两种插入方法，第一，找到不大于这个元素的第一个索引，向前插入；第二，找到不小于这个元素的最后一个索引，向后插入。（倒序插入）
-   
+
    leetcode 417题：[太平洋大西洋水流问题](https://leetcode-cn.com/problems/pacific-atlantic-water-flow/description/) 
-   
+
    leetcode 1154题：
-   
+
    该问题的关键在于计算某个结点的左子树数量及右子树数量。（递归求解）
-   
+
    
 
 ### 5. 排序
@@ -333,17 +333,19 @@ class ListNode(object):
    - 由有序数组构建二叉搜索树：找到每一个区间的中间位置，递归构建左子树及右子树。
 
      leetcode 108题：[将有序数组转换为二叉搜索树](https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/description/)
- 
+
  3. 二叉搜索树：该树的中序遍历结果就是一个非降序的结果，也就是说该树的左子树的值一定小于根节点，右子树的值一定大于根节点。
-   
+
 
 ### 3.  散列表
 
-最大的好处在于可以将查询的效率从n降低至1的时间复杂度。
+最大的好处在于可以将查询的效率从n降低至1的时间复杂度。散列表在python中最常见的就是字典的数据结构，如果存在n^3降低到n^2的时候，就需要使用到字典。这里注意，两个数使用字典可以从n^2降低到n，因为可以提前储存一个值，而三个数使用字典可以从n^3降低到n^2，因为可以提前储存某两个值的情况。
 
 1. 习题解析
 
    leetcode 1题：[两数之和](https://leetcode-cn.com/problems/two-sum/description/)
+   
+   leetcode 982题：[按位与为零的三元组](https://leetcode.cn/problems/triples-with-bitwise-and-equal-to-zero/)
 
 ### 4. 栈
 
