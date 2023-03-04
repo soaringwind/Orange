@@ -7,6 +7,7 @@ import cv2 as cv
 from torch.utils.data import Dataset, dataloader, random_split 
 import torch.nn.functional as F 
 import torch.nn as nn
+from torchvision import transforms
 
 
 def plot_react_and_show(image_array, size):
@@ -73,6 +74,9 @@ class YoloDataset(Dataset):
     def __init__(self, path, img_size=416, augment=False) -> None:
         self.img_size = img_size
         self.augment = augment
+        self.data_transform = transforms.Compose([
+            transforms.ToTensor()
+        ])
         with open(path, 'r') as file:
             img_files = file.read().splitlines()
             self.img_files = list(filter(lambda x:len(x)>0, img_files))
@@ -89,3 +93,72 @@ class YoloDataset(Dataset):
         ratio = self.img_size / max(img_h, img_w)
         x, y, w, h = ratio*x+pad[0], ratio*y+pad[2], ratio*w, ratio*h 
         return {"data": img, "rect": [x, y, w, h]}
+
+class Upsample(nn.Module):
+    """ nn.Upsample is deprecated """
+
+    def __init__(self, scale_factor, mode="nearest"):
+        super(Upsample, self).__init__()
+        self.scale_factor = scale_factor
+        self.mode = mode
+
+    def forward(self, x):
+        x = F.interpolate(x, scale_factor=self.scale_factor, mode=self.mode)
+        return x
+
+class MyResNet(nn.Module):
+    def __init__(self, in_channels, out_chanels, used_1_1_conv=False, stride=1):
+        super(MyResNet, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_chanels, kernel_size=3, padding=1, stride=stride)
+        self.conv2 = nn.Conv2d(out_chanels, out_chanels, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_chanels)
+        self.bn2 = nn.BatchNorm2d(out_chanels)
+        self.relu = nn.ReLU()
+        if used_1_1_conv:
+            self.conv3 = nn.Conv2d(in_channels, out_chanels, kernel_size=1, stride=stride)
+        else:
+            self.conv3 = None
+
+    def forward(self, x):
+        y = self.relu(self.bn1(self.conv1(x))) 
+        y = self.bn2(self.conv2(y)) 
+        if self.conv3:
+            x = self.conv3(x)
+        return self.relu(y+x) 
+
+class MyRes(nn.Module):
+    def __init__(self):
+        super(MyRes, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7, padding=3, stride=1), 
+            nn.ReLU(), 
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1), 
+            # 每个resnet有两个conv
+            MyResNet(64, 64, 1), 
+            MyResNet(64, 128, True, 2))
+        self.conv1 = MyResNet(128, 256, True, 2)
+        self.conv2 = MyResNet(256, 512, True, 2)
+        self.conv3 = MyResNet(512, 1024, True, 2)
+        self.yolo3_out = MyResNet(1024, 5, True, 1)
+        self.yolo3_out_cat = MyResNet(1024, 256, True, 1)
+        self.upsample = Upsample(scale_factor=2)
+        self.yolo2_out_cat_out = MyResNet(768, 512, True, 1)
+        self.yolo2_out = MyResNet(512, 5, True, 1)
+        self.yolo2_out_cat = MyResNet(512, 128, True, 1)
+        self.yolo1_out = MyResNet(384, 5, True, 1)
+        
+
+    def forward(self, x):
+        out = self.conv(x)
+        yolo1_in = self.conv1(out)
+        yolo2_in = self.conv2(yolo1_in)
+        yolo3_in = self.conv3(yolo2_in)
+        yolo3_out = self.yolo3_out(yolo3_in)
+        yolo2_cat = self.upsample(self.yolo3_out_cat(yolo3_in))
+        yolo2_in = torch.cat([yolo2_in, yolo2_cat],1)
+        yolo2_out_cat_out = self.yolo2_out_cat_out(yolo2_in)
+        yolo2_out = self.yolo2_out(yolo2_out_cat_out)
+        yolo1_cat = self.upsample(self.yolo2_out_cat(yolo2_out_cat_out))
+        yolo1_in = torch.cat([yolo1_in, yolo1_cat],1)
+        yolo1_out = self.yolo1_out(yolo1_in)
+        return yolo1_out, yolo2_out, yolo3_out
