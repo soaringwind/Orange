@@ -39,56 +39,92 @@
 # 输出：
 # 3 4 5 6 7
 
+# class Solution(object):
+#     def __init__(self) -> None:
+#         nums = input().split()
+#         # 1. 替换jqk
+#         nums_new = []
+#         check = {
+#             11: "J", 
+#             12: "Q", 
+#             13: "K", 
+#             14: "A"
+#         }
+#         num_check = {}
+#         for i in range(len(nums)):
+#             if nums[i].isdigit() and nums[i] != "2":
+#                 nums_new.append(int(nums[i]))
+#             elif nums[i] == "J":
+#                 nums_new.append(11)
+#             elif nums[i] == "Q":
+#                 nums_new.append(12)
+#             elif nums[i] == "K":
+#                 nums_new.append(13)
+#             elif nums[i] == "A":
+#                 nums_new.append(14)
+#             else:
+#                 continue
+#         # 2. 排序(重复的不知道是否计算，如果计算则用字典储存数量即可)
+#         for i in range(len(nums_new)):
+#             if nums_new[i] not in num_check:
+#                 num_check[nums_new[i]] = 0
+#             num_check[nums_new[i]] += 1
+#         nums_new = list(set(nums_new))
+#         nums_new.sort()
+#         # 3. 双指针输出
+#         for i in range(len(nums_new)):
+#             right = i+4
+#             long_tem = []
+#             while right < len(nums_new) and nums_new[i]+right-i == nums_new[right]:
+#                 if nums_new[right] > 10:
+#                     tem = []
+#                     for j in range(i, right+1):
+#                         if nums_new[j] in check:
+#                             tem.append(check[nums_new[j]])
+#                         else:
+#                             tem.append(nums_new[j])
+#                     long_tem.append(tem)
+#                 else:
+#                     long_tem.append(nums_new[i:right+1])
+#                 right += 1
+#             if long_tem:
+#                 print(("".join(map(str, long_tem[-1]))))
+
+
+# Solution()
+
+
+
+"""
+给你一个整数数组A,只有可以将其划分为三个和相等的非空部分时才返回true,否则返回 false。
+形式上,如果可以找出索引i+1 < j且满足A[0] + A[1] + ... + A[i] == A[i+1] + A[i+2] + ... + A[j-1] == A[j] + A[j-1] + ... + A[A.length - 1]就可以将数组三等分。
+
+示例 1:
+输入：[0,2,1,-6,6,-7,9,1,2,0,1]
+输出: true
+解释: 0 + 2 + 1 = -6 + 6 - 7 + 9 + 1 = 2 + 0 + 1
+"""
+
 class Solution(object):
-    def __init__(self) -> None:
-        nums = input().split()
-        # 1. 替换jqk
-        nums_new = []
-        check = {
-            11: "J", 
-            12: "Q", 
-            13: "K", 
-            14: "A"
-        }
-        num_check = {}
-        for i in range(len(nums)):
-            if nums[i].isdigit() and nums[i] != "2":
-                nums_new.append(int(nums[i]))
-            elif nums[i] == "J":
-                nums_new.append(11)
-            elif nums[i] == "Q":
-                nums_new.append(12)
-            elif nums[i] == "K":
-                nums_new.append(13)
-            elif nums[i] == "A":
-                nums_new.append(14)
-            else:
-                continue
-        # 2. 排序(重复的不知道是否计算，如果计算则用字典储存数量即可)
-        for i in range(len(nums_new)):
-            if nums_new[i] not in num_check:
-                num_check[nums_new[i]] = 0
-            num_check[nums_new[i]] += 1
-        nums_new = list(set(nums_new))
-        nums_new.sort()
-        # 3. 双指针输出
-        for i in range(len(nums_new)):
-            right = i+4
-            long_tem = []
-            while right < len(nums_new) and nums_new[i]+right-i == nums_new[right]:
-                if nums_new[right] > 10:
-                    tem = []
-                    for j in range(i, right+1):
-                        if nums_new[j] in check:
-                            tem.append(check[nums_new[j]])
-                        else:
-                            tem.append(nums_new[j])
-                    long_tem.append(tem)
-                else:
-                    long_tem.append(nums_new[i:right+1])
-                right += 1
-            if long_tem:
-                print(("".join(map(str, long_tem[-1]))))
+    def triple(self, nums) -> None:
+        # 三个和相等，整除
+        nums_sum = sum(nums)
+        if nums_sum % 3 != 0 or len(nums) < 3:
+            return False
+        target = nums_sum // 3 
+        left = 1 
+        right = len(nums)-2
+        left_sum = nums[0]
+        right_sum = nums[-1]
+        while left < right:
+            if left_sum == target and right_sum==target:
+                return True
+            if left_sum != target:
+                left_sum += nums[left]
+                left += 1
+            if right_sum != target:
+                right_sum += nums[right]
+                right -= 1
+        return False
 
-
-Solution()
+print(Solution().triple([0,2,1,-6,6,-7,9,1,2,0,1]))
