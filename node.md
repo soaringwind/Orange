@@ -1,22 +1,26 @@
-## vscode配置remote访问远程服务器问题
-1. 本地最好使用git的ssh程序。
-2. 本地需要生成id_rsa私钥和公钥。
-3. 需要注意远程服务器中.ssh文件及文件中的权限有固定要求不可随便更改。
+# Vue+Flask开发
 
-## linux安装nodejs
+## 1. 安装nodejs
+
+### 1.1 windows安装nodejs
+
+参考：https://blog.csdn.net/Small_Yogurt/article/details/104968169
+
+### 1.2 linux安装nodejs
+
 在官网下载之后还需要进行软连接的配置，需要把解压出来的文件夹下的bin文件路径配置到/usr/local/bin/npm等里面去，否则无法在别的地方使用。
 
-## nodejs安装vue
+## 2. nodejs安装vue
 使用npm install -g @vue/cli命令安装之后，同样需要配置软连接，否则无法在其他地方使用。
 
-## vue创建项目
+## 2.1 vue创建项目
 1. 输入vue create test创建一个新的vue项目。
 2. 采取手动创建，选择多个特性，router，vuex，css等。其余可随意选择，等待创建即可。
 3. 进入文件夹，输入vue add element-plus命令。
 4. 输入npm install axios安装axios插件。
 5. 在项目中引入axios并配置http。
 
-### 配置axios的http转发
+### 2.1.1 配置axios的http转发
 前后端的交互就是通过请求来发起，因此需要对其进行axios的配置，主要是需要配置基础路由和请求配置，响应配置等等。这个的配置也很简单，就是在http的index.js中配置即可。
 
 ```js
@@ -53,7 +57,7 @@ $http.interceptors.response.use(function (response) {
   export default $http
 ```
 
-### 配置子路由
+### 2.1.2 配置子路由
 子路由的场景通常出现在希望在某一个主页面下，根据不同的选项而展示不同的辅页面。配置也很简单，就是在router的index.js中在主页面路由下配置children选项。
 ```js
 const routes = [
@@ -87,7 +91,14 @@ const routes = [
 ]
 ```
 
+## vscode配置remote访问远程服务器问题
+
+1. 本地最好使用git的ssh程序。
+2. 本地需要生成id_rsa私钥和公钥。
+3. 需要注意远程服务器中.ssh文件及文件中的权限有固定要求不可随便更改。
+
 ## 解决System limit for number of file watchers reached
+
 sysctl fs.inotify.max_user_watches=524288 
 sysctl -p
 
