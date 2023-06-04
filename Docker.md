@@ -16,7 +16,7 @@ docker -v
 
 镜像（Image）：Docker镜像，就相当于是一个root文件系统。
 
-容器（Container）：镜像和容器的关系就像是面向对象程序设计中的累和对象一样，镜像是静态的定义，容器时镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。
+容器（Container）：镜像和容器的关系就像是面向对象程序设计中的类和对象一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。
 
 仓库（Repository）：仓库可看成是一个代码控制中心，用来保存镜像。
 
@@ -131,4 +131,124 @@ docker inspect test1
    docker run -it --name=c2 --volumes-from c3 centos:7 /bin/bash
    ```
 
-   
+
+
+
+## 4. Docker应用部署
+
+### 4.1 MySql部署
+
+需求：在Docker容器中部署Mysql，并通过外部mysql客户端操作Mysql Server。
+
+实现步骤：
+
+1. 搜索mysql镜像
+2. 拉取mysql镜像
+3. 创建容器
+4. 操作容器中的mysql
+
+通信问题：
+
+1. 容器内的网络服务和外部机器不能直接通信。
+2. 外部机器和宿主机可以直接通信。
+3. 宿主机和容器可以直接通信。
+4. 当容器中的网络服务需要被外部机器访问时，可以将容器中提供给服务的端口映射到宿主机的端口上。外部机器访问宿主机的该端口，从而间接访问容器的服务。
+5. 这种操作称为：端口映射。
+
+### 4.2 实际部署
+
+1. 搜索mysql镜像
+
+2. 拉取镜像
+
+3. 创建容器，设置端口映射，目录映射
+
+   ```shell
+   mkdir ~/mysql
+   cd ~/mysql
+   ```
+
+   ```shell
+   docker run -id \
+   -p 3307:3306 \
+   --name==c_mysql \
+   -v $PWD/conf:/etc/mysql/conf.d \ 
+   -v $PWD/logs:/logs \ 
+   -v $PWD/data:var/lib/mysql \
+   -e MYSQL_ROOT_PASSWORD=123456 \
+   mysql:5.6
+   ```
+
+   - 参数说明
+     - -p 3307:3306：将容器的3306端口映射到宿主机的3307端口。以后基本都是映射一样的端口号。
+     - -v $PWD/conf:/etc/mysql/conf.d：将主机当前目录下的conf/my.cnf挂载到容器的/etc/mysql/my/cng。配置目录。
+     - -v $PWD/data:/var/lib/mysql：将主机当前目录下的data目录挂载到容器的/var/lib/mysql。数据目录。
+     - -e MYSQL_ROOT_PASSWORD=123456：初始化root用户的密码。
+
+   4. 进入容器，操作mysql
+
+      ```shell
+      docker exec =it c_mysql /bin/bash
+      ```
+
+   5. 使用外部服务器连接。
+
+## 5. Dockerfile
+
+### 5.1 Docker镜像原理
+
+docker镜像本质是什么？：是一个分层文件系统。
+
+docker中一个centos镜像为什么只有200M，而一个centos操作系统的iso文件有好几个G？：centos的iso镜像文件包包含bootfs和rootfs，而docker的centos镜像服用操作系统的bootfs，只有rootfs和其他镜像层。
+
+docker中一个tomcat镜像为什么有500M，而一个tomcat安装包只有70多M？：由于docker中镜像是分层的，tomcat虽然只有70M，但他需要依赖于父镜像和基础镜像，所以对外暴露的tomcat镜像大小500多M。
+
+操作系统组成部分：
+
+- 进程调度子系统
+- 进程通信子系统
+- 内存管理子系统
+- 设备管理子系统
+- 文件管理子系统
+- 网络通信子系统
+- 作业控制子系统
+
+linux文件系统由bootfs和rootfs两部分组成：
+
+- bootfs：包含bootloader（引导加载程序）和kernel（内核）。
+- rootfs：root文件系统，包含的就是典型linux系统中的/dev，/prov，/bin，/etc等标准目录和文件。
+- 不同的linux发行版，bootfs基本一样，而rootfs不同，如ubuntu，centos等。
+
+docker镜像原理：
+
+- docker镜像是由特殊的文件系统叠加而成。
+- 最底端是bootfs，并使用宿主机的bootfs。所以linux装windows就比较困难。
+- 第二层是root文件系统rootfs，称为base image。
+- 然后再往上可以叠加其他的镜像文件。
+- 统一文件系统（Union Files System）技术能够将不同的层整合成一个文件系统，为这些层提供了一个统一的视角，这样就隐藏了多层的村咋子，在用户的角度看来，只存在一个文件系统。
+- 一个镜像可以放在另一个镜像的上面。位于上面的镜像称为父镜像，最底部的镜像称为基础镜像。
+- 当从一个镜像启动容器时，docker会在最顶层加载一个读写文件系统作为容器。
+
+### 5.2 镜像制作
+
+docker镜像如何制作？
+
+1. 容器转为镜像
+
+   ```shell
+   docker commit 容器id 镜像名称:版本号
+   docker save -o 压缩文件名称 镜像名称:版本号
+   docker load -i 压缩文件名称
+   ```
+
+2. dockerfile概念
+
+   - Dockerfile是一个文本文件
+   - 包含了一条条的指令
+   - 每一条指令构建一层，基于基础镜像，最终构建出一个新的镜像
+   - 对于开发人员：可以为开发团队提供一个完全一直的开发文件
+   - 对于测试人员：可以直接拿开发时所构建的镜像或者通过dockerfile文件构建一个新的镜像开始工作了。
+   - 对于运维人员：在部署时，可以实现应用的无缝移植。
+
+   写法和关键字较多，建议网上查询。
+
