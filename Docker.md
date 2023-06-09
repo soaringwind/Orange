@@ -7,6 +7,7 @@
 ```shell
 # 自己根据不同的环境安装
 # 最后一步查看docker版本
+# linux可下载tgz包后自己配置安装，tgz包链接：https://download.docker.com/linux/static/stable/x86_64/，安装指导：https://www.jianshu.com/p/64a470628e49
 docker -v 
 ```
 
