@@ -253,3 +253,26 @@ docker镜像如何制作？
 
    写法和关键字较多，建议网上查询。
 
+### 5.3 Dockerfile案例
+
+需求：
+
+自定义centos7镜像。要求：
+
+1. 默认登陆路径为/ysr
+2. 可以使用vim
+
+实现步骤
+
+1. 定义父镜像：FROM centos:7
+2. 定义作者信息：MAINTAINER tao_wei
+3. 执行安装vim命令：RUN yum install -y vim 
+4. 定义默认的工作目录：WORKDIR /usr
+5. 定义容器启动执行的命令：CMD /bin/bash
+
+```shell
+docker build -f ./centos_dockerfile -t name:id .
+```
+
+
+
