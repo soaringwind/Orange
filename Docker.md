@@ -194,6 +194,8 @@ docker inspect test1
 
    5. 使用外部服务器连接。
 
+### 4.3 nginx部署
+
 ## 5. Dockerfile
 
 ### 5.1 Docker镜像原理
